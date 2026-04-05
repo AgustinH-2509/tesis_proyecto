@@ -1,0 +1,22 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDE & Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependencias
+node_modules/
+vendor/
+
+# Entorno y Secretos
+.env
+docker-compose.override.yml
+
+# Logs y Temporales
+*.log
+temp/
+tmp/

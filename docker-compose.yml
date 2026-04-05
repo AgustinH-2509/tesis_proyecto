@@ -1,0 +1,58 @@
+services:
+  web:
+    build: .
+    container_name: sistema_devoluciones_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - devoluciones_network
+    environment:
+      - DB_HOST=db
+      - DB_NAME=sistema_devoluciones
+      - DB_USER=root
+      - DB_PASSWORD=root
+
+  db:
+    image: mysql:8.0
+    container_name: sistema_devoluciones_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: sistema_devoluciones
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - devoluciones_network
+    command: --default-authentication-plugin=mysql_native_password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sistema_devoluciones_phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    depends_on:
+      - db
+    networks:
+      - devoluciones_network
+
+volumes:
+  mysql_data:
+
+networks:
+  devoluciones_network:
+    driver: bridge

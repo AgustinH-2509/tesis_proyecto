@@ -1,0 +1,16 @@
+# Ignorar archivos de Docker y desarrollo
+.git/
+.gitignore
+*.log
+*.tmp
+temp/
+node_modules/
+.env
+.DS_Store
+Thumbs.db
+
+# Archivos de debug específicos
+debug_*.txt
+debug_*.json
+test_*.html
+test_*.php

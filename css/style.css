@@ -1,0 +1,218 @@
+:root {
+    --sidebar-bg: #16537e;
+    --sidebar-header-bg: #0c2c43;
+    --text-color: #fff;
+    --hover-bg: #9fc5e8;
+    --hover-text: #16537e;
+    --sub-menu-bg: #0e3653;
+}
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 220px;
+    background-color: var(--sidebar-bg);
+    transition: width 0.3s;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 50px;
+    padding-left: 10px;
+    color: var(--text-color);
+    flex-shrink: 0;
+    background-color: var(--sidebar-header-bg);
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.sidebar-title {
+    font-size: 17px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Estilos para la sección de usuario */
+.user-profile {
+    padding: 20px;
+    text-align: center;
+    overflow: hidden;
+    background-color: var(--sidebar-header-bg);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-color);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.user-name {
+    font-weight: bold;
+}
+/* Estilos para el contenido que hace scroll */
+.sidebar-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar-content::-webkit-scrollbar {
+    width: 0px;
+}
+
+
+/* Estilos de navegación y enlaces */
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+    gap: 20px;
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.sidebar .description {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.sidebar .icon {
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+.sidebar .nav-link:hover {
+    background-color: var(--hover-bg);
+    color: var(--hover-text);
+}
+
+.sidebar .sub-menu {
+    background-color: var(--sub-menu-bg);
+    list-style: none;
+    padding-left: 0;
+}
+
+.sidebar .sub-menu .nav-link {
+    padding-left: 20px;
+}
+
+/* Clases para el colapso */
+.sidebar-collapsed {
+    width: 60px;
+}
+
+.sidebar-collapsed .sidebar-title,
+.sidebar-collapsed .description,
+.sidebar-collapsed .user-details {
+    display: none;
+}
+
+.sidebar-collapsed .user-profile {
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar-collapsed .nav-link {
+    justify-content: center;
+}
+
+/* Media query para pantallas pequeñas (lo mismo que el colapso) */
+@media(max-width:400px){
+    .sidebar {
+        width: 60px;
+    }
+    .sidebar .description {
+        display: none;
+    }
+    .sidebar .nav-link {
+        justify-content: center;
+    }
+
+    .user-profile .user-details{
+        display: none;
+    }
+
+    .sidebar .sidebar-title{
+        display: none;
+    }
+}   
+
+.main-content {
+    height: 100%;
+    margin-left: 220px;
+    padding: 20px;
+    transition: margin-left 0.3s;
+}
+
+.main-content-expanded {
+    margin-left: 50px;
+}
+      
+.content-section {
+    display: none;
+}
+        
+.content-section.active {
+    display: block;
+}
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border-top: 5px solid var(--primary-color);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h2 {
+            font-weight: 700;
+            color: var(--header-color);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-font);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }

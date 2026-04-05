@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Motivos de Rechazo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+    <div class="container">
+        <h1>🧪 Test: Endpoint de Motivos de Rechazo</h1>
+        
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5>1. Cargar motivos vía AJAX</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary" id="testBtn">Cargar Motivos</button>
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h5>2. Información Técnica</h5>
+            </div>
+            <div class="card-body" id="techInfo">
+                <p>Cargando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '<p class="text-info">⏳ Cargando...</p>';
+        
+        try {
+            const response = await fetch('ajax/control_devolucion/obtener_motivos_rechazo.php');
+            
+            console.log('Status:', response.status);
+            console.log('Headers:', {
+                'Content-Type': response.headers.get('content-type'),
+                'Content-Length': response.headers.get('content-length')
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const text = await response.text();
+            console.log('Raw text length:', text.length);
+            console.log('Raw text (first 200 chars):', text.substring(0, 200));
+            console.log('Raw text hex (first 20 bytes):', Array.from(text.slice(0, 10)).map(c => c.charCodeAt(0).toString(16)).join(' '));
+            
+            if (!text || text.trim() === '') {
+                throw new Error('Respuesta vacía');
+            }
+            
+            const motivos = JSON.parse(text);
+            
+            console.log('Parsed JSON:', motivos);
+            console.log('Array length:', motivos.length);
+            
+            if (!Array.isArray(motivos)) {
+                throw new Error('No es un array');
+            }
+            
+            let html = '<div class="alert alert-success">✅ Motivos cargados correctamente</div>';
+            html += '<table class="table table-sm table-striped">';
+            html += '<thead><tr><th>ID</th><th>Nombre</th></tr></thead>';
+            html += '<tbody>';
+            
+            motivos.forEach(m => {
+                html += `<tr><td>${m.id}</td><td>${m.nombre}</td></tr>`;
+            });
+            
+            html += '</tbody></table>';
+            resultDiv.innerHTML = html;
+            
+        } catch (error) {
+            console.error('Error completo:', error);
+            console.error('Stack:', error.stack);
+            resultDiv.innerHTML = `<div class="alert alert-danger">❌ Error: ${error.message}</div>`;
+        }
+    });
+
+    // Información técnica
+    window.addEventListener('load', () => {
+        const techDiv = document.getElementById('techInfo');
+        techDiv.innerHTML = `
+            <p><strong>URL actual:</strong> ${window.location.href}</p>
+            <p><strong>Endpoint:</strong> /ajax/control_devolucion/obtener_motivos_rechazo.php</p>
+            <p><strong>Método:</strong> GET (sin parámetros)</p>
+            <p><strong>Respuesta esperada:</strong> Array JSON de motivos</p>
+        `;
+    });
+    </script>
+</body>
+</html>
