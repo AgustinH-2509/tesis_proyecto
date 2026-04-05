@@ -1,0 +1,29 @@
+{
+    "1": [
+        "inicio.php",
+        "control_devoluciones.php",
+        "nueva_devolucion.php",
+        "historial.php",
+        "informes.php",
+        "distribuidores.php"
+    ],
+    "2": [
+        "inicio.php",
+        "control_devoluciones.php",
+        "informes.php"
+    ],
+    "3": [
+        "inicio.php",
+        "control_devoluciones.php",
+        "nueva_devolucion.php",
+        "historial.php",
+        "informes.php",
+        "distribuidores.php",
+        "gestionar_permisos.php"
+    ],
+    "4": [
+        "inicio.php",
+        "nueva_devolucion.php",
+        "historial.php"
+    ]
+}
