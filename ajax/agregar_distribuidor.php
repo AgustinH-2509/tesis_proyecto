@@ -53,14 +53,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre_usuario = strtr($nombre_usuario, $reemplazos);
         // Validar caracteres permitidos (solo letras, números, espacios y &) - Opcional, por ahora dejamos flexible
         
-        // 3. Insertar Usuario
-        $password = $codigo; // Contraseña es el código
-        $rol = 'distribuidor';
+        // 3. Obtener ID del rol distribuidor
+        $stmt_rol = $conn->prepare("SELECT id FROM roles WHERE nombre = 'distribuidor' AND estado = 1");
+        if (!$stmt_rol) throw new Exception("Error al buscar rol: " . $conn->error);
+        $stmt_rol->execute();
+        $res_rol = $stmt_rol->get_result();
+        if ($res_rol->num_rows === 0) throw new Exception("Rol de distribuidor no encontrado o inactivo");
+        $rol_id = $res_rol->fetch_assoc()['id'];
+        $stmt_rol->close();
 
-        $stmt_user = $conn->prepare("INSERT INTO usuarios (nombre, password, rol) VALUES (?, ?, ?)");
+        // 4. Insertar Usuario
+        $password = $codigo; // Contraseña es el código
+
+        $stmt_user = $conn->prepare("INSERT INTO usuarios (nombre, password, rol_id) VALUES (?, ?, ?)");
         if (!$stmt_user) throw new Exception("Error preparando inserción de usuario: " . $conn->error);
 
-        $stmt_user->bind_param("sss", $nombre_usuario, $password, $rol);
+        $stmt_user->bind_param("ssi", $nombre_usuario, $password, $rol_id);
         if (!$stmt_user->execute()) throw new Exception("Error al insertar usuario: " . $stmt_user->error);
         $stmt_user->close();
 

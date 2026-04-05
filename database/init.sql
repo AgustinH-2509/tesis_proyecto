@@ -225,20 +225,34 @@ INSERT INTO `tipos` (`ID`, `familia`, `estado`) VALUES
 (6, 'Queso', 1),
 (7, 'Bandeja', 1);
 
+-- Estructura de tabla para la tabla `roles`
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `estado` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Volcado de datos para la tabla `roles`
+INSERT INTO `roles` (`id`, `nombre`, `estado`) VALUES
+(1, 'administracion', 1),
+(2, 'laboratorio', 1),
+(3, 'prueba', 1),
+(4, 'distribuidor', 1);
+
 -- Estructura de tabla para la tabla `usuarios`
 CREATE TABLE `usuarios` (
   `ID` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `password` varchar(20) NOT NULL,
-  `rol` varchar(50) NOT NULL
+  `rol_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcado de datos para la tabla `usuarios`
-INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol`) VALUES
-(1, 'RIVEROA', 'rivero0909', 'administracion'),
-(2, 'CARRIONB', 'carrion0909', 'laboratorio'),
-(3, 'LABORATORIO', 'labo0925', 'laboratorio'),
-(4, 'admin', 'admin', 'prueba');
+INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol_id`) VALUES
+(1, 'RIVEROA', 'rivero0909', 1),
+(2, 'CARRIONB', 'carrion0909', 2),
+(3, 'LABORATORIO', 'labo0925', 2),
+(4, 'admin', 'admin', 3);
 
 -- Índices para tablas volcadas
 
@@ -297,9 +311,15 @@ ALTER TABLE `tipos`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `familia` (`familia`);
 
+-- Indices de la tabla `roles`
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nombre` (`nombre`);
+
 -- Indices de la tabla `usuarios`
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `rol_id` (`rol_id`);
 
 -- AUTO_INCREMENT de las tablas volcadas
 
@@ -335,6 +355,10 @@ ALTER TABLE `productos`
 ALTER TABLE `tipos`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
+-- AUTO_INCREMENT de la tabla `roles`
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 -- AUTO_INCREMENT de la tabla `usuarios`
 ALTER TABLE `usuarios`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
@@ -361,5 +385,9 @@ ALTER TABLE `devoluciones_rechazos`
 ALTER TABLE `productos`
   ADD CONSTRAINT `FK_sabor` FOREIGN KEY (`sabor`) REFERENCES `sabores` (`ID`),
   ADD CONSTRAINT `FK_tipos` FOREIGN KEY (`tipo`) REFERENCES `tipos` (`ID`);
+
+-- Filtros para la tabla `usuarios`
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
 
 COMMIT;
