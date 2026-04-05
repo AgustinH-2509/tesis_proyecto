@@ -95,18 +95,34 @@ export function initDistributorModal() {
                         // Cierro el modal de registro
                         distributorModalInstance.hide();
 
-                        // Mostrar modal de éxito
-                        const successModalEl = document.getElementById('successModal');
-                        if (successModalEl) {
-                            const successModal = new bootstrap.Modal(successModalEl);
-                            successModal.show();
+                        // Disparar modal de creación de usuario con la data pre-sugerida en lugar de simplemente mostrar success
+                        if (data.sugerencias) {
+                            const showUserModal = function() {
+                                if (!document.getElementById('usuarioModal')) {
+                                    fetch('pages/gestionar_usuarios.php').then(r => r.text()).then(html => {
+                                        const div = document.createElement('div');
+                                        div.innerHTML = html;
+                                        const modalHTML = div.querySelector('#usuarioModal');
+                                        if(modalHTML) {
+                                            document.body.appendChild(modalHTML.cloneNode(true));
+                                            window.abrirModalUsuario(data.sugerencias);
+                                        }
+                                    });
+                                } else {
+                                    window.abrirModalUsuario(data.sugerencias);
+                                }
+                            };
 
-                            // Recargar al cerrar el modal de éxito
-                            successModalEl.addEventListener('hidden.bs.modal', function () {
-                                window.loadContent('distribuidores.php');
-                            });
+                            if (typeof window.abrirModalUsuario !== 'function') {
+                                import('./gestionar_usuarios.js').then(module => {
+                                    module.initUsuarios(); // Inicializa globals
+                                    showUserModal();
+                                });
+                            } else {
+                                showUserModal();
+                            }
                         } else {
-                            alert(data.message); // Fallback
+                            alert(data.message); 
                             window.loadContent('distribuidores.php');
                         }
 

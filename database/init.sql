@@ -244,15 +244,16 @@ CREATE TABLE `usuarios` (
   `ID` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `password` varchar(20) NOT NULL,
-  `rol_id` int(11) NOT NULL
+  `rol_id` int(11) NOT NULL,
+  `distribuidor_codigo` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcado de datos para la tabla `usuarios`
-INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol_id`) VALUES
-(1, 'RIVEROA', 'rivero0909', 1),
-(2, 'CARRIONB', 'carrion0909', 2),
-(3, 'LABORATORIO', 'labo0925', 2),
-(4, 'admin', 'admin', 3);
+INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol_id`, `distribuidor_codigo`) VALUES
+(1, 'RIVEROA', 'rivero0909', 1, NULL),
+(2, 'CARRIONB', 'carrion0909', 2, NULL),
+(3, 'LABORATORIO', 'labo0925', 2, NULL),
+(4, 'admin', 'admin', 3, NULL);
 
 -- Índices para tablas volcadas
 
@@ -319,7 +320,8 @@ ALTER TABLE `roles`
 -- Indices de la tabla `usuarios`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`ID`),
-  ADD KEY `rol_id` (`rol_id`);
+  ADD KEY `rol_id` (`rol_id`),
+  ADD KEY `distribuidor_codigo` (`distribuidor_codigo`);
 
 -- AUTO_INCREMENT de las tablas volcadas
 
@@ -388,6 +390,7 @@ ALTER TABLE `productos`
 
 -- Filtros para la tabla `usuarios`
 ALTER TABLE `usuarios`
-  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`);
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`),
+  ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`distribuidor_codigo`) REFERENCES `distribuidores` (`codigo`) ON DELETE SET NULL;
 
 COMMIT;

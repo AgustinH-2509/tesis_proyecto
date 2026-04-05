@@ -87,6 +87,13 @@ $rol_id = $_SESSION['rol_id'] ?? 0;
                     <span class="description">Permisos</span>
                 </a>
                 <?php endif; ?>
+
+                <?php if (tienePermiso($rol_id, 'gestionar_usuarios.php')): ?>
+                <a class="nav-link" href="#" data-content-id="gestionar_usuarios.php">
+                    <span class="icon"><i class="bi bi-people"></i></span>
+                    <span class="description">Usuarios</span>
+                </a>
+                <?php endif; ?>
             </nav>
         </div>
 

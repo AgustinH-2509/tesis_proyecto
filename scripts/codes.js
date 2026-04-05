@@ -5,6 +5,7 @@ import { initDistributorModal } from "./modal_distribuidor.js";
 import { initHistorial } from "./historial.js";
 import { initControlDevoluciones } from "./control_devoluciones_simple.js";
 import { initGestionarPermisos } from "./gestionar_permisos.js";
+import { initUsuarios } from "./gestionar_usuarios.js";
 
 let sidebar, mainContent, toggleButton;
 
@@ -42,6 +43,8 @@ window.loadContent = function (url) {
                 // No hay JS adicional para esta página, solo se carga el HTML/PHP
             } else if (page === 'gestionar_permisos.php') {
                 initGestionarPermisos();
+            } else if (page === 'gestionar_usuarios.php') {
+                initUsuarios();
             }
         })
         .catch(error => {
