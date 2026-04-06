@@ -33,7 +33,7 @@ include '../administrador/conexion_auto.php';
                     <tbody>
                         <?php
                         // Realiza la consulta a la base de datos
-                        $sql = "SELECT codigo, razon_social FROM distribuidores";
+                        $sql = "SELECT d.codigo, d.razon_social, (SELECT COUNT(ID) FROM usuarios u WHERE u.distribuidor_codigo = d.codigo) as tiene_usuario FROM distribuidores d";
                         $result = $conn->query($sql);
 
                         // Verifica si hay resultados
@@ -44,8 +44,13 @@ include '../administrador/conexion_auto.php';
                                 echo "<tr data-codigo='" . htmlspecialchars($row['codigo']) . "' data-razon-social='" . htmlspecialchars($row['razon_social']) . "'>";
                                 echo "<td>" . htmlspecialchars($row['codigo']) . "</td>";
                                 echo "<td>" . htmlspecialchars($row['razon_social']) . "</td>";
-                                echo "<td>";
-                                echo "<button class='btn btn-sm btn-warning edit-btn' data-bs-toggle='modal' data-bs-target='#editDistributorModal'>";
+                                echo "<td class='text-nowrap'>";
+                                if ($row['tiene_usuario'] == 0) {
+                                    echo "<button class='btn btn-sm btn-info text-white me-1 create-user-btn' data-codigo='" . htmlspecialchars($row['codigo']) . "' data-razon-social='" . htmlspecialchars($row['razon_social']) . "' title='Crear Usuario Asociado'>";
+                                    echo "<i class='bi bi-person-badge'></i>";
+                                    echo "</button>";
+                                }
+                                echo "<button class='btn btn-sm btn-warning edit-btn me-1' data-bs-toggle='modal' data-bs-target='#editDistributorModal'>";
                                 echo "<i class='bi bi-pencil-square'></i>";
                                 echo "</button>";
                                 echo "<button class='btn btn-sm btn-danger disable-btn' data-codigo='" . htmlspecialchars($row['codigo']) . "'>";

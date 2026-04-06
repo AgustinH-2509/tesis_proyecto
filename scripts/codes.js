@@ -108,8 +108,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    window.addEventListener('beforeunload', function () {
-        navigator.sendBeacon('administrador/logout_on_close.php');
-    });
     handleSidebarState();
 });

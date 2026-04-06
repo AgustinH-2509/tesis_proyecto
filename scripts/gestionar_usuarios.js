@@ -5,10 +5,11 @@ export function initUsuarios() {
     const usuariosTableBody = document.querySelector('#usuarios-table tbody');
 
     // Lógica para el buscador dinámico
-    if (searchUsuario && usuariosTableBody) {
+    if (searchUsuario) {
         searchUsuario.addEventListener('input', function () {
             const searchText = this.value.toLowerCase();
-            const rows = usuariosTableBody.querySelectorAll('tr');
+            // Buscar dinámicamente en lugar de usar la variable estática que queda obsoleta tras el clonado
+            const rows = document.querySelectorAll('#usuarios-table tbody tr');
             rows.forEach(row => {
                 const rowText = row.textContent.toLowerCase();
                 if (rowText.includes(searchText)) {
@@ -56,23 +57,35 @@ export function initUsuarios() {
                     const modal = bootstrap.Modal.getInstance(document.getElementById('usuarioModal'));
                     if (modal) modal.hide();
                     
-                    // Mostrar modal de éxito o alert
-                    const successModalEl = document.getElementById('successModal');
-                    if (successModalEl) {
-                        const successModal = bootstrap.Modal.getInstance(successModalEl) || new bootstrap.Modal(successModalEl);
-                        successModal.show();
-                        successModalEl.addEventListener('hidden.bs.modal', function () {
-                            // Solo recargar si estamos en la vista de gestionar usuarios (para listado completo)
-                            if (document.getElementById('usuarios-table')) {
-                                window.loadContent('gestionar_usuarios.php');
-                            }
-                        }, { once: true });
-                    } else {
-                        alert(data.message);
+                    // Ignoramos el modal estático por si tiene oyentes previos colgados y creamos uno dinámico limpio siempre
+                    const dynamicId = 'dynSuccessModal_' + Date.now();
+                    const smHTML = `<div class="modal fade" id="${dynamicId}" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header bg-success text-white"><h5 class="modal-title">Éxito</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body fs-5 text-center p-4">${data.message}</div><div class="modal-footer justify-content-center"><button type="button" class="btn btn-success" data-bs-dismiss="modal">Aceptar</button></div></div></div></div>`;
+                    
+                    const div = document.createElement('div');
+                    div.innerHTML = smHTML;
+                    document.body.appendChild(div.firstChild);
+                    
+                    const successModalEl = document.getElementById(dynamicId);
+                    const successModal = new bootstrap.Modal(successModalEl);
+                    successModal.show();
+                    
+                    successModalEl.addEventListener('hidden.bs.modal', function () {
+                        // Limpiar DOM del backdrop y del modal para evitar locks de SPA
+                        successModal.dispose(); 
+                        successModalEl.remove();
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) backdrop.remove();
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+
+                        // Refrescamos enérgicamente según la vista
                         if (document.getElementById('usuarios-table')) {
                             window.loadContent('gestionar_usuarios.php');
+                        } else if (document.getElementById('distributor-table') || window.location.href.includes('distribuidores')) {
+                            window.loadContent('distribuidores.php');
                         }
-                    }
+                    }, { once: true });
                 } else {
                     errorContainer.innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
                 }

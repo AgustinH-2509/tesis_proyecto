@@ -19,7 +19,8 @@
         "historial.php",
         "informes.php",
         "distribuidores.php",
-        "gestionar_permisos.php"
+        "gestionar_permisos.php",
+        "gestionar_usuarios.php"
     ],
     "4": [
         "inicio.php",
