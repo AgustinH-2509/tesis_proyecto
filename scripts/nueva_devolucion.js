@@ -400,15 +400,15 @@ export function initNuevaDevolucion() {
         // Evento para guardar y enviar - NUEVA LÓGICA SIMPLIFICADA
         if (btnGuardarEnviar) {
             btnGuardarEnviar.addEventListener('click', async () => {
-                console.log('🚀 Botón guardar presionado');
+                console.log('Botón guardar presionado');
                 
                 const rows = returnTableBody.querySelectorAll('tr');
-                console.log('🚀 Filas encontradas:', rows.length);
+                console.log('Filas encontradas:', rows.length);
                 
                 if (rows.length === 0) {
                     createConfirmationModal({
                         type: 'danger',
-                        icon: '📋',
+                        icon: '',
                         title: 'Tabla Vacía',
                         message: 'No hay productos agregados a la devolución. Debe agregar al menos un producto antes de poder guardar.',
                         confirmText: 'Entendido',
@@ -427,10 +427,10 @@ export function initNuevaDevolucion() {
                 
                 const confirmed = await createConfirmationModal({
                     type: 'primary',
-                    icon: '💾',
+                    icon: '',
                     title: 'Guardar Nueva Devolución',
                     message: '¿Confirma que desea guardar esta nueva devolución?',
-                    details: `<strong>Distribuidor:</strong> ${distributorName}<br><strong>Número de Devolución:</strong> ${numero_devolucion_text}<br><strong>Productos a devolver:</strong> ${rows.length}<br><br>📋 Una vez guardada, la devolución estará disponible para ser procesada en el control de devoluciones.`,
+                    details: `<strong>Distribuidor:</strong> ${distributorName}<br><strong>Número de Devolución:</strong> ${numero_devolucion_text}<br><strong>Productos a devolver:</strong> ${rows.length}<br><br>Una vez guardada, la devolución estará disponible para ser procesada en el control de devoluciones.`,
                     confirmText: 'Sí, Guardar Devolución',
                     confirmIcon: '<i class="bi bi-save"></i>',
                     cancelText: 'Cancelar'
@@ -440,7 +440,7 @@ export function initNuevaDevolucion() {
                     return;
                 }
                 
-                console.log('🚀 Datos extraídos:');
+                console.log('Datos extraídos:');
                 console.log('  - distribuidor_codigo:', distribuidor_codigo);
                 console.log('  - numero_devolucion_text:', numero_devolucion_text);
                 console.log('  - numero_devolucion_raw:', numero_devolucion_raw);
@@ -462,7 +462,7 @@ export function initNuevaDevolucion() {
                     const celdas = row.querySelectorAll('td');
                     
                     // DEBUG ESPECÍFICO DEL PROBLEMA
-                    console.log(`🔍 FILA ${index + 1} DEBUG:`);
+                    console.log(`FILA ${index + 1} DEBUG:`);
                     console.log('- row.dataset.id:', row.dataset.id);
                     console.log('- typeof row.dataset.id:', typeof row.dataset.id);
                     console.log('- row.dataset completo:', row.dataset);
@@ -480,16 +480,16 @@ export function initNuevaDevolucion() {
                         motivoId: row.dataset.motivoId
                     };
                     
-                    console.log(`🚨 PRODUCTO ${index + 1} - COLUMNA_1 = "${productoData.columna_1}" (tipo: ${typeof productoData.columna_1})`);
-                    console.log(`📦 Producto ${index + 1}: ID=${productoData.id}, Cantidad=${productoData.columna_2}`);
+                    console.log(`PRODUCTO ${index + 1} - COLUMNA_1 = "${productoData.columna_1}" (tipo: ${typeof productoData.columna_1})`);
+                    console.log(`Producto ${index + 1}: ID=${productoData.id}, Cantidad=${productoData.columna_2}`);
                     jsonData.datos.push(productoData);
                 });
 
-                console.log('🚀 JSON completo a enviar:', jsonData);
-                console.log('🚀 JSON string:', JSON.stringify(jsonData, null, 2));
+                console.log('JSON completo a enviar:', jsonData);
+                console.log('JSON string:', JSON.stringify(jsonData, null, 2));
                 
                 // DEBUGGING ESPECÍFICO PARA EL PROBLEMA
-                console.log('🔍 VERIFICANDO COLUMNA_1 EN JSON:');
+                console.log('VERIFICANDO COLUMNA_1 EN JSON:');
                 jsonData.datos.forEach((item, index) => {
                     console.log(`Producto ${index + 1}: columna_1 = "${item.columna_1}" (tipo: ${typeof item.columna_1})`);
                 });
@@ -508,21 +508,21 @@ export function initNuevaDevolucion() {
                     return;
                 }
 
-                console.log('🚀 Enviando JSON directamente...');
+                console.log('Enviando JSON directamente...');
 
                 // TEST SIMPLE: Primero verificar que tenemos elementos
                 console.group('🧪 TEST DE DATOS');
-                console.log('✅ returnTableBody existe:', !!returnTableBody);
-                console.log('✅ rows encontradas:', rows.length);
-                console.log('✅ selectDistribuidor existe:', !!selectDistribuidor);
-                console.log('✅ distribuidor_codigo:', distribuidor_codigo);
-                console.log('✅ numeroDevolucionSpan existe:', !!numeroDevolucionSpan);
-                console.log('✅ numero_devolucion_text:', numero_devolucion_text);
-                console.log('✅ numero_devolucion_raw:', numero_devolucion_raw);
-                console.log('✅ datos array length:', jsonData.datos.length);
+                console.log('returnTableBody existe:', !!returnTableBody);
+                console.log('rows encontradas:', rows.length);
+                console.log('selectDistribuidor existe:', !!selectDistribuidor);
+                console.log('distribuidor_codigo:', distribuidor_codigo);
+                console.log('numeroDevolucionSpan existe:', !!numeroDevolucionSpan);
+                console.log('numero_devolucion_text:', numero_devolucion_text);
+                console.log('numero_devolucion_raw:', numero_devolucion_raw);
+                console.log('datos array length:', jsonData.datos.length);
                 console.groupEnd();
 
-                console.log('🧪 Enviando datos REALES al guardar_devolucion.php:', jsonData);
+                console.log('Enviando datos REALES al guardar_devolucion.php:', jsonData);
 
                 fetch('ajax/guardar_devolucion.php', {
                     method: 'POST',
@@ -531,14 +531,14 @@ export function initNuevaDevolucion() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('✅ Respuesta del servidor:', data);
+                    console.log('Respuesta del servidor:', data);
                     
                     if (data.success) {
                         // Crear modal de éxito
                         const successModal = createConfirmationModal({
                             type: 'success',
-                            icon: '🎉',
-                            title: '¡Devolución Guardada Exitosamente!',
+                            icon: '',
+                            title: 'Devolución Guardada Exitosamente!',
                             message: `La devolución ha sido registrada correctamente y está lista para ser procesada.`,
                             confirmText: 'Entendido',
                             confirmIcon: '<i class="bi bi-check-circle"></i>',
@@ -564,7 +564,7 @@ export function initNuevaDevolucion() {
                         // Modal de error más profesional
                         createConfirmationModal({
                             type: 'danger',
-                            icon: '❌',
+                            icon: '',
                             title: 'Error al Guardar Devolución',
                             message: 'No se pudo guardar la devolución debido a un error del sistema.',
                             confirmText: 'Entendido',
@@ -589,7 +589,7 @@ export function initNuevaDevolucion() {
         
         // Carga automática para distribuidor pre-seleccionado
         if (selectDistribuidor && selectDistribuidor.value) {
-            console.log('🚀 Distribuidor detectado al inicio, cargando datos automáticamente...');
+            console.log('Distribuidor detectado al inicio, cargando datos automáticamente...');
             // Disparar el evento change manualmente
             const event = new Event('change');
             selectDistribuidor.dispatchEvent(event);

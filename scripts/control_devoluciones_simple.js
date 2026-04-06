@@ -36,7 +36,7 @@ export function initControlDevoluciones() {
             
             const confirmed = await createConfirmationModal({
                 type: 'success',
-                icon: '🏁',
+                icon: '',
                 title: 'Finalizar Devolución',
                 message: '¿Está seguro que desea finalizar esta devolución?',
                 details: 'Esta acción actualizará automáticamente el estado de la devolución y procesará todas las decisiones de aceptación/rechazo. No se podrá revertir.',
@@ -297,7 +297,7 @@ export function initControlDevoluciones() {
                                             <strong class="text-danger">${motivo || 'Sin motivo'}</strong>
                                         </td>
                                         <td class="py-2" style="background-color: #fff5f5;">
-                                            ${observacion && observacion !== 'N/A' ? `<small class="text-muted">📝 ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
+                                            ${observacion && observacion !== 'N/A' ? `<small class="text-muted">Obs: ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
                                         </td>
                                         <td class="py-2" style="background-color: #fff5f5;">
                                             <span class="badge bg-danger">Rechazado</span>
@@ -341,7 +341,7 @@ export function initControlDevoluciones() {
                                             <strong class="text-success">${motivo || 'Aceptado'}</strong>
                                         </td>
                                         <td class="py-2" style="background-color: #f0fff4;">
-                                            ${observacion && observacion !== 'N/A' ? `<small class="text-muted">📝 ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
+                                            ${observacion && observacion !== 'N/A' ? `<small class="text-muted">Obs: ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
                                         </td>
                                         <td class="py-2" style="background-color: #f0fff4;">
                                             <span class="badge bg-success">Aceptado</span>
@@ -381,7 +381,7 @@ export function initControlDevoluciones() {
             const detalleId = event.target.getAttribute('data-detalle-id');
             const cantidadOriginal = parseInt(event.target.getAttribute('data-cantidad-original'), 10) || 0;
             
-            console.log('🔍 Botón Rechazar presionado para detalle:', detalleId);
+            console.log('Botón Rechazar presionado para detalle:', detalleId);
             
             // Buscar la celda que muestra la cantidad disponible actual
             const cantidadCell = row.querySelector('td:nth-child(2)');
@@ -389,11 +389,11 @@ export function initControlDevoluciones() {
             
             if (cantidadCell) {
                 const cantidadText = cantidadCell.textContent.trim();
-                console.log('🔍 Texto de cantidad:', cantidadText);
+                console.log('Texto de cantidad:', cantidadText);
                 
                 const match = cantidadText.match(/^(\d+)/);
                 cantidadDisponible = match ? parseInt(match[1]) : cantidadOriginal;
-                console.log('🔍 Cantidad disponible calculada:', cantidadDisponible);
+                console.log('Cantidad disponible calculada:', cantidadDisponible);
             }
 
             if (cantidadDisponible <= 0) {
@@ -442,7 +442,7 @@ export function initControlDevoluciones() {
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <small class="text-muted">💡 Disponible para rechazo: <strong>${cantidadDisponible} unidades</strong></small>
+                            <small class="text-muted">Disponible para rechazo: <strong>${cantidadDisponible} unidades</strong></small>
                         </div>
                     </div>
                 </td>
@@ -472,7 +472,7 @@ export function initControlDevoluciones() {
                 if (Array.isArray(motivos)) {
                     if (motivos.length === 0) {
                         console.warn('Array vacío de motivos');
-                        showNotification('⚠️ No hay motivos disponibles en el sistema', 'warning');
+                        showNotification('No hay motivos disponibles en el sistema', 'warning');
                     } else {
                         motivos.forEach(motivo => {
                             const option = document.createElement('option');
@@ -488,7 +488,7 @@ export function initControlDevoluciones() {
                     throw new Error('Formato de respuesta inválido: ' + typeof motivos);
                 }
             } catch (error) {
-                console.error('❌ Error al cargar motivos:', error);
+                console.error('Error al cargar motivos:', error);
                 console.error('Stack completo:', error.stack);
                 showNotification(`Error al cargar motivos: ${error.message}`, 'error');
             }
@@ -498,7 +498,7 @@ export function initControlDevoluciones() {
             const detalleId = event.target.getAttribute('data-detalle-id');
             const cantidadOriginal = parseInt(event.target.getAttribute('data-cantidad-original'), 10) || 0;
             
-            console.log('🔍 Botón Aceptar presionado para detalle:', detalleId);
+            console.log('Botón Aceptar presionado para detalle:', detalleId);
             
             // Buscar la celda que muestra la cantidad disponible actual
             const cantidadCell = row.querySelector('td:nth-child(2)');
@@ -556,7 +556,7 @@ export function initControlDevoluciones() {
                     </div>
                     <div class="row mt-2">
                         <div class="col-12">
-                            <small class="text-muted">💡 Disponible para aceptar: <strong>${cantidadDisponible} unidades</strong></small>
+                            <small class="text-muted">Disponible para aceptar: <strong>${cantidadDisponible} unidades</strong></small>
                         </div>
                     </div>
                 </td>
@@ -588,7 +588,7 @@ export function initControlDevoluciones() {
                     throw new Error(motivos.error || 'Respuesta inválida');
                 }
             } catch (error) {
-                console.error('❌ Error al cargar motivos:', error);
+                console.error('Error al cargar motivos:', error);
                 showNotification(`Error al cargar motivos: ${error.message}`, 'error');
             }
         }
@@ -820,10 +820,10 @@ export function initControlDevoluciones() {
             
             const confirmed = await createConfirmationModal({
                 type: 'danger',
-                icon: '🗑️',
+                icon: '',
                 title: 'Eliminar Rechazo',
                 message: '¿Está seguro que desea eliminar este registro de rechazo?',
-                details: `<strong>Cantidad:</strong> ${cantidad} unidad${cantidad > 1 ? 'es' : ''}<br><strong>Motivo:</strong> ${motivo}<br><br>⚠️ <strong>Esta acción no se puede deshacer.</strong>`,
+                details: `<strong>Cantidad:</strong> ${cantidad} unidad${cantidad > 1 ? 'es' : ''}<br><strong>Motivo:</strong> ${motivo}<br><br><strong>Esta acción no se puede deshacer.</strong>`,
                 confirmText: 'Sí, Eliminar',
                 confirmIcon: '<i class="bi bi-trash3-fill"></i>',
                 cancelText: 'No, Conservar'

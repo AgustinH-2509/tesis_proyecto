@@ -32,7 +32,7 @@ window.loadContent = function (url) {
             } else if (page === 'distribuidores.php') {
                 initDistributorModal();
             } else if (page === 'control_devoluciones.php') {
-                console.log('✅ Inicializando módulo: Control de Devoluciones (control_devoluciones.php)');
+                console.log('Inicializando módulo: Control de Devoluciones (control_devoluciones.php)');
                 // Usar setTimeout para asegurar que el DOM esté completamente renderizado
                 setTimeout(() => {
                     initControlDevoluciones();

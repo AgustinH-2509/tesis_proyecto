@@ -22,18 +22,18 @@ export function initGestionarPermisos() {
                 btnSubmit.disabled = false;
                 
                 if (data.success) {
-                    alertBox.innerHTML = `<div class="alert alert-success mb-0"><i class="bi bi-check-circle-fill"></i> ${data.message} <br> <small>Recargando sistema para aplicar menús...</small></div>`;
+                    alertBox.innerHTML = `<div class="alert alert-success mb-0">${data.message} <br> <small>Recargando sistema para aplicar menús...</small></div>`;
                     // Refrescar página para aplicar cambios a la UI principal
                     setTimeout(() => window.location.reload(), 1500);
                 } else {
-                    alertBox.innerHTML = `<div class="alert alert-danger mb-0"><i class="bi bi-exclamation-triangle-fill"></i> ${data.message}</div>`;
+                    alertBox.innerHTML = `<div class="alert alert-danger mb-0">${data.message}</div>`;
                 }
             })
             .catch(error => {
                 console.error("Error:", error);
                 btnSubmit.innerHTML = originalText;
                 btnSubmit.disabled = false;
-                alertBox.innerHTML = `<div class="alert alert-danger mb-0"><i class="bi bi-exclamation-triangle-fill"></i> Ocurrió un error al contactar al servidor.</div>`;
+                alertBox.innerHTML = `<div class="alert alert-danger mb-0">Ocurrió un error al contactar al servidor.</div>`;
             });
         });
     }

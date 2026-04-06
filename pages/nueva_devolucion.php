@@ -162,12 +162,12 @@ $conn->close();
         <div class="modal-content border-success">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="modalExitoLabel">
-                    <i class="fas fa-check-circle me-2"></i>¡Éxito!
+                    Éxito
                 </h5>
             </div>
             <div class="modal-body text-center">
                 <div class="mb-3">
-                    <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    <!-- Icono removido para profesionalismo -->
                 </div>
                 <h4 class="text-success mb-3">Devolución Guardada</h4>
                 <p class="mb-0" id="mensajeExito">La devolución ha sido guardada correctamente en el sistema.</p>
