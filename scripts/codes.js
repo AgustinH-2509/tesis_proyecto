@@ -6,6 +6,7 @@ import { initHistorial } from "./historial.js";
 import { initControlDevoluciones } from "./control_devoluciones_simple.js";
 import { initGestionarPermisos } from "./gestionar_permisos.js";
 import { initUsuarios } from "./gestionar_usuarios.js";
+import { initInformes } from "./informes.js";
 
 let sidebar, mainContent, toggleButton;
 
@@ -39,6 +40,8 @@ window.loadContent = function (url) {
                 }, 100);
             } else if (page === 'historial.php') {
                 initHistorial();
+            } else if (page === 'informes.php') {
+                initInformes();
             } else if (page === 'ver_devolucion.php') {
                 // No hay JS adicional para esta página, solo se carga el HTML/PHP
             } else if (page === 'gestionar_permisos.php') {

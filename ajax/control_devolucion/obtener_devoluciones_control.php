@@ -51,7 +51,7 @@ try {
         FROM devoluciones d
         JOIN distribuidores dist ON d.distribuidor_codigo = dist.codigo
         JOIN devoluciones_estados e ON d.estado = e.id
-        WHERE 1=1
+        WHERE d.estado NOT IN (5, 6, 8)
     ";
 
     $params = [];

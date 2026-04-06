@@ -14,7 +14,7 @@ include '../administrador/conexion_auto.php';
                 <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                         <label for="distribuidor" class="form-label">Distribuidor:</label>
-                        <select id="distribuidor" class="form-select">
+                        <select id="distribuidor" name="distribuidor" class="form-select">
                             <option value="">Todos</option>
                             <?php
                             // Consulta para obtener solo los distribuidores con estado = 1
@@ -32,21 +32,21 @@ include '../administrador/conexion_auto.php';
 
                     <div class="col-md-3">
                         <label for="fecha-desde" class="form-label">Fecha Desde:</label>
-                        <input type="date" id="fecha-desde" class="form-control">
+                        <input type="date" id="fecha-desde" name="fecha-desde" class="form-control">
                     </div>
 
                     <div class="col-md-3">
                         <label for="fecha-hasta" class="form-label">Fecha Hasta:</label>
-                        <input type="date" id="fecha-hasta" class="form-control">
+                        <input type="date" id="fecha-hasta" name="fecha-hasta" class="form-control">
                     </div>
 
                     <div class="col-md-2">
                         <label for="estado" class="form-label">Estado:</label>
-                        <select id="estado" class="form-select">
+                        <select id="estado" name="estado" class="form-select">
                             <option value="">Todos</option>
                             <?php
                             // Consulta para obtener todos los estados de la tabla 'devoluciones_estados'
-                            $sql_estados = "SELECT id, estado FROM devoluciones_estados ORDER BY id ASC";
+                            $sql_estados = "SELECT id, estado FROM devoluciones_estados WHERE id NOT IN (5, 6, 8) ORDER BY id ASC";
                             $result_estados = $conn->query($sql_estados);
 
                             if ($result_estados->num_rows > 0) {
