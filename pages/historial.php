@@ -26,14 +26,20 @@ $conn->close();
                 <div class="row g-3 align-items-end"> 
                     <div class="col-md-9">
                         <label for="distribuidor" class="form-label">Distribuidor:</label>
-                        <select id="distribuidor" name="distribuidor" class="form-select">
+                        <?php 
+                        $dist_codigo_fijo = $_SESSION['distribuidor_codigo'] ?? null;
+                        ?>
+                        <select id="distribuidor" name="distribuidor" class="form-select" <?php echo $dist_codigo_fijo ? 'disabled' : ''; ?>>
                             <option value="">Selecciona un distribuidor...</option>
                             <?php foreach ($distribuidores as $distribuidor): ?>
-                                <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>">
+                                <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>" <?php echo ($dist_codigo_fijo == $distribuidor['codigo']) ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($distribuidor['codigo'] . ' - ' . $distribuidor['razon_social']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if ($dist_codigo_fijo): ?>
+                            <input type="hidden" name="distribuidor_hidden" id="distribuidor_hidden" value="<?php echo htmlspecialchars($dist_codigo_fijo); ?>">
+                        <?php endif; ?>
                     </div>
                     
                     <div class="col-12 col-md-3"> 

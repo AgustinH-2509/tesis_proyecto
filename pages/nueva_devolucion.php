@@ -53,14 +53,20 @@ $conn->close();
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label for="codigo_distribuidor" class="form-label">Distribuidor:</label>
-                    <select id="codigo_distribuidor" name="codigo_distribuidor" class="form-select">
-                        <option value="" disabled selected>Selecciona un distribuidor</option>
+                    <?php 
+                    $dist_codigo_fijo = $_SESSION['distribuidor_codigo'] ?? null;
+                    ?>
+                    <select id="codigo_distribuidor" name="codigo_distribuidor" class="form-select" <?php echo $dist_codigo_fijo ? 'disabled' : ''; ?>>
+                        <option value="" disabled <?php echo !$dist_codigo_fijo ? 'selected' : ''; ?>>Selecciona un distribuidor</option>
                         <?php foreach ($distribuidores as $distribuidor): ?>
-                            <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>">
+                            <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>" <?php echo ($dist_codigo_fijo == $distribuidor['codigo']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($distribuidor['codigo'] . ' - ' . $distribuidor['razon_social']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <?php if ($dist_codigo_fijo): ?>
+                        <input type="hidden" name="codigo_distribuidor_hidden" id="codigo_distribuidor_hidden" value="<?php echo htmlspecialchars($dist_codigo_fijo); ?>">
+                    <?php endif; ?>
                 </div>
             </div>
 

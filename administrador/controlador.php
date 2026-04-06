@@ -44,6 +44,7 @@ if (isset($_POST['btn_ingresar'])) {
         $_SESSION['user_name'] = $row['nombre']; // Cambiado de 'user' a 'nombre'
         $_SESSION['rol'] = $row['rol_nombre']; // Store the user's role string from roles table
         $_SESSION['rol_id'] = $row['rol_id']; // ID numérico para permisos
+        $_SESSION['distribuidor_codigo'] = $row['distribuidor_codigo']; // Código de distribuidor para usuarios restringidos
 
         // Redirect to the index page
         header("Location: ../index.php");

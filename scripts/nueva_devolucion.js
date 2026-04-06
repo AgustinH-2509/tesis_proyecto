@@ -587,5 +587,13 @@ export function initNuevaDevolucion() {
         }
         actualizarBotonGuardar();
         
+        // Carga automática para distribuidor pre-seleccionado
+        if (selectDistribuidor && selectDistribuidor.value) {
+            console.log('🚀 Distribuidor detectado al inicio, cargando datos automáticamente...');
+            // Disparar el evento change manualmente
+            const event = new Event('change');
+            selectDistribuidor.dispatchEvent(event);
+        }
+        
     }, 100);
 }
