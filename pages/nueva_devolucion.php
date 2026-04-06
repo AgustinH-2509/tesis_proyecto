@@ -4,12 +4,12 @@ include '../administrador/conexion_auto.php';
 
 // Prepara y ejecuta la consulta para obtener productos ordenados por 'codigo'
 $sql_productos = "
-    (SELECT p.iD as id, p.codigo, p.nombre, s.nombre as sabor
+    (SELECT p.iD as id, p.codigo, p.nombre, s.nombre as sabor, p.tipo
     FROM productos p
     JOIN sabores s ON p.sabor = s.ID
     WHERE p.estado = 1)
     UNION
-    (SELECT iD as id, codigo, nombre, NULL AS sabor
+    (SELECT iD as id, codigo, nombre, NULL AS sabor, tipo
     FROM productos
     WHERE sabor IS NULL AND estado = 1)
     ORDER BY codigo
@@ -85,7 +85,7 @@ $conn->close();
                                     $displayText .= ' (' . strtoupper(substr(htmlspecialchars($producto['sabor']), 0, 1)) . ')';
                                 }
                                 ?>
-                                <option value="<?php echo htmlspecialchars($producto['codigo']); ?>" data-id="<?php echo htmlspecialchars($producto['id']); ?>">
+                                <option value="<?php echo htmlspecialchars($producto['codigo']); ?>" data-id="<?php echo htmlspecialchars($producto['id']); ?>" data-tipo="<?php echo htmlspecialchars($producto['tipo']); ?>">
                                     <?php echo $displayText; ?>
                                 </option>
                             <?php endforeach; ?>

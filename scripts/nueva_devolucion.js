@@ -50,16 +50,22 @@ export function initNuevaDevolucion() {
             const modal = new bootstrap.Modal(document.getElementById('dynamicConfirmModal'));
             
             // Configurar eventos
+            let isConfirmed = false;
             const confirmBtn = document.getElementById('confirmActionBtn');
             confirmBtn.addEventListener('click', () => {
+                isConfirmed = true;
                 modal.hide();
-                resolve(true);
             });
 
-            // Resolver con false al cerrar sin confirmar
+            // Resolver al terminar de ocultarse (así esperamos la animación)
             document.getElementById('dynamicConfirmModal').addEventListener('hidden.bs.modal', () => {
                 document.getElementById('dynamicConfirmModal').remove();
-                resolve(false);
+                // Limpieza de seguridad por si Bootstrap se traba
+                document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
+                
+                resolve(isConfirmed);
             });
 
             // Mostrar modal
@@ -290,13 +296,25 @@ export function initNuevaDevolucion() {
                 return;
             }
 
+            const productoSeleccionado = codigoSelect.options[codigoSelect.selectedIndex];
+            const familiaId = productoSeleccionado.dataset.tipo;
+            
+            // Validacion específica para familia Queso (ID 6)
+            if (familiaId === '6') {
+                const bgValidatorClass = parseInt(kgInput.value) > 0 || parseFloat(kgInput.value) > 0;
+                if (!kgInput.value || !bgValidatorClass) {
+                    alert('El campo KG es obligatorio y debe ser mayor a 0 para la familia de Quesos.');
+                    kgInput.focus();
+                    return;
+                }
+            }
+
             if (!motivoSelect.value || motivoSelect.value === '') {
                 alert('Selecciona un motivo');
                 motivoSelect.focus();
                 return;
             }
 
-            const productoSeleccionado = codigoSelect.options[codigoSelect.selectedIndex];
             const productoTexto = productoSeleccionado.text;
             const productoCodigo = codigoSelect.value;
             const productoId = productoSeleccionado.dataset.id;

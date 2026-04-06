@@ -119,20 +119,20 @@ try {
                 throw new Exception("Cantidad rechazada debe ser mayor a 0 para detalle_id: {$detalle_id}.");
             }
 
-            // Validación: obtener suma actual de rechazos para este detalle
-            $sql_sum_rechazos = "SELECT COALESCE(SUM(cantidad), 0) AS total_rechazado FROM devoluciones_rechazos WHERE devolucion_detalle = ? AND rechazo = 1";
-            $stmt_sum = $conn->prepare($sql_sum_rechazos);
+            // Validación: obtener suma actual de procesados (rechazos + aceptados) para este detalle
+            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_rechazos WHERE devolucion_detalle = ?";
+            $stmt_sum = $conn->prepare($sql_sum_proc);
             $stmt_sum->bind_param("i", $detalle_id);
             $stmt_sum->execute();
             $result_sum = $stmt_sum->get_result()->fetch_assoc();
             $stmt_sum->close();
 
-            $total_rechazado_actual = (int)($result_sum['total_rechazado'] ?? 0);
-            $cantidad_disponible = $detalle_original['cantidad'] - $total_rechazado_actual;
+            $total_procesado_actual = (int)($result_sum['total_procesado'] ?? 0);
+            $cantidad_disponible = $detalle_original['cantidad'] - $total_procesado_actual;
 
             // La cantidad rechazada no puede exceder la cantidad disponible
             if ($cantidad_rechazada > $cantidad_disponible) {
-                throw new Exception("Cantidad rechazada ({$cantidad_rechazada}) no puede exceder la cantidad disponible ({$cantidad_disponible}) para detalle_id: {$detalle_id}.");
+                throw new Exception("Cantidad rechazada ({$cantidad_rechazada}) no puede exceder la cantidad disponible ({$cantidad_disponible}).");
             }
 
             // Insertar el rechazo
@@ -155,43 +155,50 @@ try {
             }
             $stmt_insert->close();
 
-            // Marcar el detalle como rechazado (pero puede ser rechazado parcial)
+            // Marcar el detalle (por lo menos parcial)
             $estado_para_detalle = 1;
 
-        } else { // Aceptación: registrar cantidad aceptada en devoluciones_rechazos
-            // Primero, eliminar registros previos de rechazos para este detalle
-            $sql_delete = "DELETE FROM devoluciones_rechazos WHERE devolucion_detalle = ?";
-            $stmt_delete = $conn->prepare($sql_delete);
-            $stmt_delete->bind_param("i", $detalle_id);
-
-            if (!$stmt_delete->execute()) {
-                throw new Exception("Error al eliminar registros previos de rechazo para id: {$detalle_id}.");
+        } else { // Aceptación
+            if (!isset($motivo_id)) {
+                throw new Exception("Se requiere un motivo de aceptación para detalle_id: {$detalle_id}.");
             }
-            $stmt_delete->close();
 
-            // Ahora insertar la cantidad aceptada (cantidad original - ya rechazada en esta pasada)
-            // Si no hay rechazos previos, la cantidad aceptada es la cantidad original
-            $cantidad_aceptada = $detalle_original['cantidad'];
-            
-            // Obtener motivo y observaciones del detalle original
-            $motivo_aceptacion = $detalle_original['motivos_devolucion'] ?? null;
-            $observacion_aceptacion = $detalle_original['observaciones'] ?? null;
+            $cantidad_aceptada = $item['cantidad_rechazada'] ?? $item['cantidad'] ?? 0;
+            if ($cantidad_aceptada <= 0) {
+                throw new Exception("Cantidad aceptada debe ser mayor a 0.");
+            }
 
-            $sql_insert_aceptado = "INSERT INTO devoluciones_rechazos (devolucion_detalle, producto, cantidad, rechazo_motivo, rechazo_observacion) VALUES (?, ?, ?, ?, ?)";
+            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_rechazos WHERE devolucion_detalle = ?";
+            $stmt_sum = $conn->prepare($sql_sum_proc);
+            $stmt_sum->bind_param("i", $detalle_id);
+            $stmt_sum->execute();
+            $result_sum = $stmt_sum->get_result()->fetch_assoc();
+            $stmt_sum->close();
+
+            $total_procesado_actual = (int)($result_sum['total_procesado'] ?? 0);
+            $cantidad_disponible = $detalle_original['cantidad'] - $total_procesado_actual;
+
+            if ($cantidad_aceptada > $cantidad_disponible) {
+                throw new Exception("Cantidad aceptada ({$cantidad_aceptada}) excesiva frente al disponible ({$cantidad_disponible}).");
+            }
+
+            $sql_insert_aceptado = "INSERT INTO devoluciones_rechazos (devolucion_detalle, producto, cantidad, aceptacion_motivo, rechazo_observacion, rechazo) VALUES (?, ?, ?, ?, ?, 0)";
             $stmt_insert_aceptado = $conn->prepare($sql_insert_aceptado);
             $stmt_insert_aceptado->bind_param(
                 "isiss",
                 $detalle_id,
                 $detalle_original['producto_cod'],
                 $cantidad_aceptada,
-                $motivo_aceptacion,
-                $observacion_aceptacion
+                $motivo_id,
+                $observacion
             );
 
             if (!$stmt_insert_aceptado->execute()) {
-                throw new Exception("Error al insertar registro de aceptación para id: {$detalle_id}: " . $stmt_insert_aceptado->error);
+                throw new Exception("Error al insertar aceptación: " . $stmt_insert_aceptado->error);
             }
             $stmt_insert_aceptado->close();
+            
+            $estado_para_detalle = 0;
         }
 
         // 3. Actualizar el estado de la fila en devoluciones_detalle

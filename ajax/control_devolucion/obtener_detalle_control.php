@@ -148,8 +148,8 @@ try {
              FROM devoluciones_rechazos dr LEFT JOIN motivos_rechazos mr ON dr.rechazo_motivo = mr.ID 
              WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 1) AS rechazos_raw,
             COALESCE((SELECT SUM(dr.cantidad) FROM devoluciones_rechazos dr WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 0), 0) AS total_aceptado,
-            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', 'Aceptado', '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' ')) SEPARATOR '||') 
-             FROM devoluciones_rechazos dr LEFT JOIN motivos_rechazos mr ON dr.rechazo_motivo = mr.ID 
+            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', COALESCE(dm.motivos, 'Aceptado sin motivo especifico'), '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' ')) SEPARATOR '||') 
+             FROM devoluciones_rechazos dr LEFT JOIN devoluciones_motivos dm ON dr.aceptacion_motivo = dm.id 
              WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 0) AS aceptados_raw
         FROM devoluciones_detalle dd
         JOIN productos p ON dd.producto_cod = p.iD
