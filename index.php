@@ -4,6 +4,8 @@ if (!isset($_SESSION['usuario_logueado'])) {
     header("Location: login.php");
     exit();
 }
+require_once __DIR__ . '/administrador/verificar_permiso.php';
+$rol_id = $_SESSION['rol_id'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,10 +28,13 @@ if (!isset($_SESSION['usuario_logueado'])) {
 
         <div class="sidebar-content">
             <nav class="nav flex-column">
+                <?php if (tienePermiso($rol_id, 'inicio.php')): ?>
                 <a class="nav-link" href="#" data-content-id="inicio.php">
                     <span class="icon"><i class="bi bi-house"></i></span>
                     <span class="description">Inicio</span>
                 </a>
+                <?php endif; ?>
+                <?php if (tienePermiso($rol_id, 'control_devoluciones.php')): ?>
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-lab" aria-expanded="false" aria-control="submenu-lab">
                     <span class="icon"><i class="bi bi-flask"></i></span>
                     <span class="description">Laboratorio <i class="bi bi-caret-down-fill"></i></span>
@@ -40,28 +45,55 @@ if (!isset($_SESSION['usuario_logueado'])) {
                         <span class="description">Control Devoluciones</span>
                     </a>
                 </div>
+                <?php endif; ?>
+                
+                <?php if (tienePermiso($rol_id, 'nueva_devolucion.php') || tienePermiso($rol_id, 'historial.php') || tienePermiso($rol_id, 'informes.php')): ?>
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#submenu-dev" aria-expanded="false" aria-control="submenu-dev">
                     <span class="icon"><i class="bi bi-truck"></i></span>
                     <span class="description">Devoluciones <i class="bi bi-caret-down-fill"></i> </span> 
                 </a>
                 <div class="sub-menu collapse" id="submenu-dev">
+                    <?php if (tienePermiso($rol_id, 'nueva_devolucion.php')): ?>
                     <a class="nav-link" href="#" data-content-id="nueva_devolucion.php">
                         <span class="icon"><i class="bi bi-file-earmark-plus"></i></span>
                         <span class="description">Nueva Devolución</span>
                     </a>
+                    <?php endif; ?>
+                    <?php if (tienePermiso($rol_id, 'historial.php')): ?>
                     <a class="nav-link" href="#" data-content-id="historial.php">
                         <span class="icon"><i class="bi bi-clipboard"></i></span>
                         <span class="description">Historial</span>
                     </a>
+                    <?php endif; ?>
+                    <?php if (tienePermiso($rol_id, 'informes.php')): ?>
                     <a class="nav-link" href="#" data-content-id="informes.php">
                         <span class="icon"><i class="bi bi-clipboard2-data"></i></span>
                         <span class="description">Informes</span>
                     </a>
+                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
+
+                <?php if (tienePermiso($rol_id, 'distribuidores.php')): ?>
                 <a class="nav-link" href="#" data-content-id="distribuidores.php">
                     <span class="icon"><i class="bi bi-person"></i></span>
                     <span class="description">Distribuidores</span>
                 </a>
+                <?php endif; ?>
+
+                <?php if (tienePermiso($rol_id, 'gestionar_permisos.php')): ?>
+                <a class="nav-link" href="#" data-content-id="gestionar_permisos.php">
+                    <span class="icon"><i class="bi bi-shield-lock"></i></span>
+                    <span class="description">Permisos</span>
+                </a>
+                <?php endif; ?>
+
+                <?php if (tienePermiso($rol_id, 'gestionar_usuarios.php')): ?>
+                <a class="nav-link" href="#" data-content-id="gestionar_usuarios.php">
+                    <span class="icon"><i class="bi bi-people"></i></span>
+                    <span class="description">Usuarios</span>
+                </a>
+                <?php endif; ?>
             </nav>
         </div>
 

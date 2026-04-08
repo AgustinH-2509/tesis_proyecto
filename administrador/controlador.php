@@ -22,7 +22,7 @@ if (isset($_POST['btn_ingresar'])) {
     }
 
     // Usar prepared statements para prevenir SQL injection
-    $sql = "SELECT * FROM usuarios WHERE nombre = ? AND password = ?";
+    $sql = "SELECT u.*, r.nombre AS rol_nombre FROM usuarios u JOIN roles r ON u.rol_id = r.id WHERE u.nombre = ? AND u.password = ?";
     $stmt = $conn->prepare($sql);
     
     if (!$stmt) {
@@ -42,7 +42,9 @@ if (isset($_POST['btn_ingresar'])) {
         $_SESSION['usuario_logueado'] = true;
         $_SESSION['id'] = $row['ID']; // Guardar el ID del usuario
         $_SESSION['user_name'] = $row['nombre']; // Cambiado de 'user' a 'nombre'
-        $_SESSION['rol'] = $row['rol']; // Store the user's role
+        $_SESSION['rol'] = $row['rol_nombre']; // Store the user's role string from roles table
+        $_SESSION['rol_id'] = $row['rol_id']; // ID numérico para permisos
+        $_SESSION['distribuidor_codigo'] = $row['distribuidor_codigo']; // Código de distribuidor para usuarios restringidos
 
         // Redirect to the index page
         header("Location: ../index.php");

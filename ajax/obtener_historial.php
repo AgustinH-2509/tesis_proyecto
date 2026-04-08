@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../administrador/conexion_auto.php';
 
 header('Content-Type: application/json');
@@ -19,6 +20,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'get_distribuidores') {
 // Lógica para obtener historial de devoluciones
 if (isset($_POST['distribuidor_codigo'])) {
     $distribuidor_codigo = $_POST['distribuidor_codigo'];
+    
+    // Seguridad: Si el usuario es un distribuidor, forzamos su propio código
+    if (isset($_SESSION['distribuidor_codigo']) && !empty($_SESSION['distribuidor_codigo'])) {
+        $distribuidor_codigo = $_SESSION['distribuidor_codigo'];
+    }
 
     // Construye la consulta de forma condicional
     $sql = "

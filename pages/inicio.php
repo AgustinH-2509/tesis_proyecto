@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once __DIR__ . '/../administrador/verificar_permiso.php';
+$rol_id = $_SESSION['rol_id'] ?? 0;
 ?>
 
 <div class="container mt-4">
@@ -16,6 +18,7 @@ session_start();
                 </div>
             </div>
         </div>
+        <?php if (tienePermiso($rol_id, 'control_devoluciones.php')): ?>
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
@@ -25,5 +28,6 @@ session_start();
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </div>

@@ -104,5 +104,5 @@ export function initHistorial() {
     }
 
     // Llama a la función al cargar la página para mostrar todas las devoluciones por defecto
-    fetchDevoluciones('');
+    fetchDevoluciones(distribuidorSelect.value || '');
 }

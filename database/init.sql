@@ -57,14 +57,11 @@ CREATE TABLE `devoluciones_estados` (
 
 -- Volcado de datos para la tabla `devoluciones_estados`
 INSERT INTO `devoluciones_estados` (`id`, `estado`) VALUES
-(2, 'Envase dañado'),
+(2, 'Recibida'),
 (1, 'Enviada'),
-(3, 'Malas condiciones de devolucion'),
-(4, 'Normal'),
-(5, 'Producto Inexistente'),
+(5, 'Aceptada'),
 (6, 'Rechazada'),
-(8, 'Rechazada parcialmente'),
-(7, 'Vencimiento no visible');
+(8, 'Rechazada parcialmente');
 
 -- Estructura de tabla para la tabla `devoluciones_motivos`
 CREATE TABLE `devoluciones_motivos` (
@@ -75,14 +72,10 @@ CREATE TABLE `devoluciones_motivos` (
 
 -- Volcado de datos para la tabla `devoluciones_motivos`
 INSERT INTO `devoluciones_motivos` (`id`, `motivos`, `estado`) VALUES
-(1, 'Abierto voluntariamente', NULL),
-(2, 'Envase dañado', NULL),
-(3, 'Malas condiciones de devolucion', NULL),
-(4, 'Normal', NULL),
-(5, 'Producto Inexistente', NULL),
-(6, 'Próximo al vencimiento (normal)', NULL),
-(7, 'Vencimiento no visible', NULL),
-(8, 'Vencido', NULL);
+(1, 'Textura inusual', NULL),
+(2, 'Color anormal', NULL),
+(3, 'Presencia de cuerpos extraños', NULL),
+(4, 'Otro: ', NULL);
 
 -- Estructura de tabla para la tabla `devoluciones_rechazos`
 CREATE TABLE `devoluciones_rechazos` (
@@ -92,7 +85,8 @@ CREATE TABLE `devoluciones_rechazos` (
   `rechazo` tinyint(4) DEFAULT NULL,
   `rechazo_motivo` int(11) DEFAULT NULL,
   `rechazo_observacion` varchar(255) DEFAULT NULL,
-  `producto` varchar(255) DEFAULT NULL
+  `producto` varchar(255) DEFAULT NULL,
+  `aceptacion_motivo` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Estructura de tabla para la tabla `distribuidores`
@@ -188,9 +182,69 @@ CREATE TABLE `productos` (
 
 -- Volcado de datos para la tabla `productos` (productos utilizados en las devoluciones)
 INSERT INTO `productos` (`iD`, `codigo`, `estado`, `fecha_creacion`, `fecha_mod`, `nombre`, `sabor`, `tipo`, `usuario_creacion`, `usuario_mod`) VALUES
+(1, 1011, 1, '2025-09-04', NULL, 'Leche Entera', NULL, 1, 'root@localhost', NULL),
+(2, 1014, 1, '2025-09-04', NULL, 'Leche Chocolatada', NULL, 1, 'root@localhost', NULL),
+(3, 1015, 1, '2025-09-04', NULL, 'Leche Parcialmente Descremada', NULL, 1, 'root@localhost', NULL),
+(4, 1011, 1, '2025-09-04', NULL, 'Leche Entera Caja', NULL, 1, 'root@localhost', NULL),
+(5, 1015, 1, '2025-09-04', NULL, 'Leche Parcialmente Descremada Caja', NULL, 1, 'root@localhost', NULL),
+(6, 1991, 1, '2025-09-04', NULL, 'Leche en Polvo x 25 Kg', NULL, 1, 'root@localhost', NULL),
+(7, 1059, 1, '2025-09-04', NULL, 'Tybo COSALTA', NULL, 6, 'root@localhost', NULL),
+(8, 1063, 1, '2025-09-04', NULL, 'Cuartirolos COSALTA', NULL, 6, 'root@localhost', NULL),
+(9, 1859, 1, '2025-09-04', NULL, 'Tybo SAN BERNARDO', NULL, 6, 'root@localhost', NULL),
+(10, 1863, 1, '2025-09-04', NULL, 'Cuartirolos SAN BERNARDO', NULL, 6, 'root@localhost', NULL),
+(11, 1066, 1, '2025-09-04', NULL, 'Sardo', NULL, 6, 'root@localhost', NULL),
+(12, 1069, 1, '2025-09-04', NULL, 'Criollo mediano', NULL, 6, 'root@localhost', NULL),
+(13, 1070, 1, '2025-09-04', NULL, 'Criollo chico', NULL, 6, 'root@localhost', NULL),
+(14, 1071, 1, '2025-09-04', NULL, 'Criollo chico con Aji', NULL, 6, 'root@localhost', NULL),
+(15, 1061, 1, '2025-09-04', NULL, 'Cuart. COSALTA 1/2 Hma.', NULL, 6, 'root@localhost', NULL),
+(16, 1067, 1, '2025-09-04', NULL, 'Cuart. COSALTA 1/8 Hma.', NULL, 6, 'root@localhost', NULL),
+(17, 1068, 1, '2025-09-04', NULL, 'Cuart. COSALTA 1/4 Hma.', NULL, 6, 'root@localhost', NULL),
+(18, 1073, 1, '2025-09-04', NULL, 'Sardo 1/2 Hma.', NULL, 6, 'root@localhost', NULL),
+(19, 1074, 1, '2025-09-04', NULL, 'Tybo 1/2 Hma.', NULL, 6, 'root@localhost', NULL),
+(20, 1078, 1, '2025-09-04', NULL, 'Sardo cuña', NULL, 6, 'root@localhost', NULL),
+(21, 1091, 1, '2025-09-04', NULL, 'Por Salut 1/2 Hma.', NULL, 6, 'root@localhost', NULL),
+(22, 1097, 1, '2025-09-04', NULL, 'Por Salut 1/8 Hma.', NULL, 6, 'root@localhost', NULL),
+(23, 1098, 1, '2025-09-04', NULL, 'Por Salut 1/4 Hma.', NULL, 6, 'root@localhost', NULL),
+(24, 1003, 1, '2025-09-04', NULL, 'Ricotta Pilon', NULL, 6, 'root@localhost', NULL),
+(25, 1022, 1, '2025-09-04', NULL, 'Ricotta Paquete', NULL, 6, 'root@localhost', NULL),
+(26, 1134, 1, '2025-09-04', NULL, 'Crema Pote x 200 g', NULL, 4, 'root@localhost', NULL),
+(27, 1031, 1, '2025-09-04', NULL, 'Crema Balde x 4 kg. Dura', NULL, 4, 'root@localhost', NULL),
+(28, 1139, 1, '2025-09-04', NULL, 'D. L. Artesanal x 400 g.', NULL, 5, 'root@localhost', NULL),
+(29, 1040, 1, '2025-09-04', NULL, 'D. L. Artesanal x 1 kg.', NULL, 5, 'root@localhost', NULL),
+(30, 1143, 1, '2025-09-04', NULL, 'D. L. Momy x 200 g', NULL, 5, 'root@localhost', NULL),
+(31, 1144, 1, '2025-09-04', NULL, 'D. L. Momy x 400 g.', NULL, 5, 'root@localhost', NULL),
+(32, 1045, 1, '2025-09-04', NULL, 'D. L. Momy x 1 kg.', NULL, 5, 'root@localhost', NULL),
+(33, 1056, 1, '2025-09-04', NULL, 'D. L. Repostero x 1 kg.', NULL, 5, 'root@localhost', NULL),
+(34, 1053, 1, '2025-09-04', NULL, 'D. L. Repostero x 5 kg.', NULL, 5, 'root@localhost', NULL),
+(35, 1054, 1, '2025-09-04', NULL, 'D. L. Repostero x 10kg.', NULL, 5, 'root@localhost', NULL),
+(36, 1055, 1, '2025-09-04', NULL, 'D. L. Repostero x 25 kg.', NULL, 5, 'root@localhost', NULL),
+(37, 1019, 1, '2025-09-04', NULL, 'Yogur Pote Entero Frutilla', 2, 3, 'root@localhost', NULL),
+(38, 1019, 1, '2025-09-04', NULL, 'Yogur Pote Entero Vainilla', 4, 3, 'root@localhost', NULL),
+(39, 1013, 1, '2025-09-04', NULL, 'Yogur Pote Light Durazno', 1, 3, 'root@localhost', NULL),
+(40, 1013, 1, '2025-09-04', NULL, 'Yogur Pote Light Frutilla', 2, 3, 'root@localhost', NULL),
+(41, 1013, 1, '2025-09-04', NULL, 'Yogur Pote Light Vainilla', 4, 3, 'root@localhost', NULL),
+(42, 1028, 1, '2025-09-04', NULL, 'Yogur Pote Con Cereales Frutilla', 2, 3, 'root@localhost', NULL),
+(43, 1028, 1, '2025-09-04', NULL, 'Yogur Pote Con Cereales Vainilla', 4, 3, 'root@localhost', NULL),
+(51, 1018, 1, '2025-09-04', NULL, 'Yogur Sachet Entero Durazno', 1, 2, 'root@localhost', NULL),
+(52, 1018, 1, '2025-09-04', NULL, 'Yogur Sachet Entero Frutilla', 2, 2, 'root@localhost', NULL),
+(53, 1018, 1, '2025-09-04', NULL, 'Yogur Sachet Entero Mango', 3, 2, 'root@localhost', NULL),
+(54, 1018, 1, '2025-09-04', NULL, 'Yogur Sachet Entero Vainilla', 4, 2, 'root@localhost', NULL),
+(55, 1020, 1, '2025-09-04', NULL, 'Yogur Sachet Pulpa Frutilla', 2, 2, 'root@localhost', NULL),
 (56, 1021, 1, '2025-09-04', NULL, 'Yogur Sachet Pulpa Durazno', 1, 2, 'root@localhost', NULL),
+(57, 1027, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible Banana', 5, 2, 'root@localhost', NULL),
+(58, 1027, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible Durazno', 1, 2, 'root@localhost', NULL),
 (59, 1027, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible Frutilla', 2, 2, 'root@localhost', NULL),
-(69, 2006, 1, '2025-09-04', NULL, 'Bandeja Quesera', NULL, 7, 'root@localhost', NULL);
+(60, 1027, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible Vainilla', 4, 2, 'root@localhost', NULL),
+(61, 1026, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible 250 gr. Frutilla', 2, 2, 'root@localhost', NULL),
+(62, 1026, 1, '2025-09-04', NULL, 'Yogur Sachet Bebible 250 gr. Vainilla', 4, 2, 'root@localhost', NULL),
+(63, 1025, 1, '2025-09-04', NULL, 'Yogur Sachet Light Durazno', 1, 2, 'root@localhost', NULL),
+(64, 1025, 1, '2025-09-04', NULL, 'Yogur Sachet Light Frutilla', 2, 2, 'root@localhost', NULL),
+(65, 1025, 1, '2025-09-04', NULL, 'Yogur Sachet Light Vainilla', 4, 2, 'root@localhost', NULL),
+(66, 1827, 1, '2025-09-04', NULL, 'Yogur Sachet San Bernardo Durazno', 1, 2, 'root@localhost', NULL),
+(67, 1827, 1, '2025-09-04', NULL, 'Yogur Sachet San Bernardo Frutilla', 2, 2, 'root@localhost', NULL),
+(68, 1827, 1, '2025-09-04', NULL, 'Yogur Sachet San Bernardo Multifruta', 6, 2, 'root@localhost', NULL),
+(69, 2006, 1, '2025-09-04', NULL, 'Bandeja Quesera', NULL, 7, 'root@localhost', NULL),
+(70, 2008, 1, '2025-09-04', NULL, 'Bandeja Sachera', NULL, 7, 'root@localhost', NULL);
 
 -- Estructura de tabla para la tabla `sabores`
 CREATE TABLE `sabores` (
@@ -225,20 +279,35 @@ INSERT INTO `tipos` (`ID`, `familia`, `estado`) VALUES
 (6, 'Queso', 1),
 (7, 'Bandeja', 1);
 
+-- Estructura de tabla para la tabla `roles`
+CREATE TABLE `roles` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `estado` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Volcado de datos para la tabla `roles`
+INSERT INTO `roles` (`id`, `nombre`, `estado`) VALUES
+(1, 'administracion', 1),
+(2, 'laboratorio', 1),
+(3, 'prueba', 1),
+(4, 'distribuidor', 1);
+
 -- Estructura de tabla para la tabla `usuarios`
 CREATE TABLE `usuarios` (
   `ID` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `password` varchar(20) NOT NULL,
-  `rol` varchar(50) NOT NULL
+  `rol_id` int(11) NOT NULL,
+  `distribuidor_codigo` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcado de datos para la tabla `usuarios`
-INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol`) VALUES
-(1, 'RIVEROA', 'rivero0909', 'administracion'),
-(2, 'CARRIONB', 'carrion0909', 'laboratorio'),
-(3, 'LABORATORIO', 'labo0925', 'laboratorio'),
-(4, 'admin', 'admin', 'prueba');
+INSERT INTO `usuarios` (`ID`, `nombre`, `password`, `rol_id`, `distribuidor_codigo`) VALUES
+(1, 'RIVEROA', 'rivero0909', 1, NULL),
+(2, 'CARRIONB', 'carrion0909', 2, NULL),
+(3, 'LABORATORIO', 'labo0925', 2, NULL),
+(4, 'admin', 'admin', 3, NULL);
 
 -- Índices para tablas volcadas
 
@@ -297,9 +366,16 @@ ALTER TABLE `tipos`
   ADD PRIMARY KEY (`ID`),
   ADD UNIQUE KEY `familia` (`familia`);
 
+-- Indices de la tabla `roles`
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nombre` (`nombre`);
+
 -- Indices de la tabla `usuarios`
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `rol_id` (`rol_id`),
+  ADD KEY `distribuidor_codigo` (`distribuidor_codigo`);
 
 -- AUTO_INCREMENT de las tablas volcadas
 
@@ -335,6 +411,10 @@ ALTER TABLE `productos`
 ALTER TABLE `tipos`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
+-- AUTO_INCREMENT de la tabla `roles`
+ALTER TABLE `roles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 -- AUTO_INCREMENT de la tabla `usuarios`
 ALTER TABLE `usuarios`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
@@ -355,11 +435,17 @@ ALTER TABLE `devoluciones_detalle`
 -- Filtros para la tabla `devoluciones_rechazos`
 ALTER TABLE `devoluciones_rechazos`
   ADD CONSTRAINT `devoluciones_rechazos_ibfk_1` FOREIGN KEY (`devolucion_detalle`) REFERENCES `devoluciones_detalle` (`ID`),
-  ADD CONSTRAINT `devoluciones_rechazos_ibfk_2` FOREIGN KEY (`rechazo_motivo`) REFERENCES `motivos_rechazos` (`ID`);
+  ADD CONSTRAINT `devoluciones_rechazos_ibfk_2` FOREIGN KEY (`rechazo_motivo`) REFERENCES `motivos_rechazos` (`ID`),
+  ADD CONSTRAINT `devoluciones_rechazos_ibfk_3` FOREIGN KEY (`aceptacion_motivo`) REFERENCES `devoluciones_motivos` (`id`);
 
 -- Filtros para la tabla `productos`
 ALTER TABLE `productos`
   ADD CONSTRAINT `FK_sabor` FOREIGN KEY (`sabor`) REFERENCES `sabores` (`ID`),
   ADD CONSTRAINT `FK_tipos` FOREIGN KEY (`tipo`) REFERENCES `tipos` (`ID`);
+
+-- Filtros para la tabla `usuarios`
+ALTER TABLE `usuarios`
+  ADD CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`rol_id`) REFERENCES `roles` (`id`),
+  ADD CONSTRAINT `usuarios_ibfk_2` FOREIGN KEY (`distribuidor_codigo`) REFERENCES `distribuidores` (`codigo`) ON DELETE SET NULL;
 
 COMMIT;

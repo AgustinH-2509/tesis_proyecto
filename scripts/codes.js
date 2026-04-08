@@ -4,6 +4,9 @@ import { initNuevaDevolucion } from "./nueva_devolucion.js";
 import { initDistributorModal } from "./modal_distribuidor.js";
 import { initHistorial } from "./historial.js";
 import { initControlDevoluciones } from "./control_devoluciones_simple.js";
+import { initGestionarPermisos } from "./gestionar_permisos.js";
+import { initUsuarios } from "./gestionar_usuarios.js";
+import { initInformes } from "./informes.js";
 
 let sidebar, mainContent, toggleButton;
 
@@ -30,16 +33,21 @@ window.loadContent = function (url) {
             } else if (page === 'distribuidores.php') {
                 initDistributorModal();
             } else if (page === 'control_devoluciones.php') {
-                console.log('✅ Inicializando módulo: Control de Devoluciones (control_devoluciones.php)');
+                console.log('Inicializando módulo: Control de Devoluciones (control_devoluciones.php)');
                 // Usar setTimeout para asegurar que el DOM esté completamente renderizado
                 setTimeout(() => {
                     initControlDevoluciones();
                 }, 100);
-            }
-            else if (page === 'historial.php') {
+            } else if (page === 'historial.php') {
                 initHistorial();
+            } else if (page === 'informes.php') {
+                initInformes();
             } else if (page === 'ver_devolucion.php') {
                 // No hay JS adicional para esta página, solo se carga el HTML/PHP
+            } else if (page === 'gestionar_permisos.php') {
+                initGestionarPermisos();
+            } else if (page === 'gestionar_usuarios.php') {
+                initUsuarios();
             }
         })
         .catch(error => {
@@ -103,8 +111,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    window.addEventListener('beforeunload', function () {
-        navigator.sendBeacon('administrador/logout_on_close.php');
-    });
     handleSidebarState();
 });

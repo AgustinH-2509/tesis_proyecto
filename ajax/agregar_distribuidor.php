@@ -44,29 +44,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$stmt->execute()) throw new Exception("Error al insertar distribuidor: " . $stmt->error);
         $stmt->close();
 
-        // 2. Normalizar nombre para usuario
-        // Mayúsculas y reemplazo de acentos
-        $nombre_usuario = mb_strtoupper($razon_social, 'UTF-8');
+        // 2. Preparar datos de sugerencia para el frontend
+        $nombre_sugerido = mb_strtoupper($razon_social, 'UTF-8');
         $reemplazos = [
             'Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ü' => 'U', 'Ñ' => 'N'
         ];
-        $nombre_usuario = strtr($nombre_usuario, $reemplazos);
-        // Validar caracteres permitidos (solo letras, números, espacios y &) - Opcional, por ahora dejamos flexible
-        
-        // 3. Insertar Usuario
-        $password = $codigo; // Contraseña es el código
-        $rol = 'distribuidor';
+        $nombre_sugerido = strtr($nombre_sugerido, $reemplazos);
+        $password_sugerida = $codigo;
 
-        $stmt_user = $conn->prepare("INSERT INTO usuarios (nombre, password, rol) VALUES (?, ?, ?)");
-        if (!$stmt_user) throw new Exception("Error preparando inserción de usuario: " . $conn->error);
-
-        $stmt_user->bind_param("sss", $nombre_usuario, $password, $rol);
-        if (!$stmt_user->execute()) throw new Exception("Error al insertar usuario: " . $stmt_user->error);
-        $stmt_user->close();
-
-        // Confirmar transacción
+        // Confirmar transacción (solo guardó el distribuidor)
         $conn->commit();
-        echo json_encode(['success' => true, 'message' => 'Distribuidor y usuario creados correctamente']);
+        
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Distribuidor guardado correctamente. Por favor completa el alta del usuario.',
+            'sugerencias' => [
+                'nombre' => $nombre_sugerido,
+                'password' => $password_sugerida,
+                'distribuidor_codigo' => $codigo
+            ]
+        ]);
 
     } catch (Exception $e) {
         $conn->rollback();

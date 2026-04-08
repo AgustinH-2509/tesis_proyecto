@@ -7,10 +7,10 @@ export function initDistributorModal() {
     const addDistributorButton = document.querySelector('[data-bs-target="#addDistributorModal"]'); // Selecciona el botón para abrir el modal
 
     // Lógica para el buscador dinámico
-    if (searchInput && distributorTableBody) {
+    if (searchInput) {
         searchInput.addEventListener('input', function () {
             const searchText = this.value.toLowerCase();
-            const rows = distributorTableBody.querySelectorAll('tr');
+            const rows = document.querySelectorAll('#distributor-table tbody tr');
 
             rows.forEach(row => {
                 const rowText = row.textContent.toLowerCase();
@@ -95,18 +95,26 @@ export function initDistributorModal() {
                         // Cierro el modal de registro
                         distributorModalInstance.hide();
 
-                        // Mostrar modal de éxito
-                        const successModalEl = document.getElementById('successModal');
-                        if (successModalEl) {
-                            const successModal = new bootstrap.Modal(successModalEl);
-                            successModal.show();
-
-                            // Recargar al cerrar el modal de éxito
-                            successModalEl.addEventListener('hidden.bs.modal', function () {
-                                window.loadContent('distribuidores.php');
+                        // Disparar modal de creación de usuario con la data pre-sugerida
+                        if (data.sugerencias) {
+                            import('./gestionar_usuarios.js').then(module => {
+                                if (!document.getElementById('usuarioModal')) {
+                                    fetch('pages/gestionar_usuarios.php').then(r => r.text()).then(html => {
+                                        const div = document.createElement('div');
+                                        div.innerHTML = html;
+                                        const modalHTML = div.querySelector('#usuarioModal');
+                                        if(modalHTML) {
+                                            document.body.appendChild(modalHTML.cloneNode(true));
+                                            module.initUsuarios();
+                                            window.abrirModalUsuario(data.sugerencias);
+                                        }
+                                    });
+                                } else {
+                                    window.abrirModalUsuario(data.sugerencias);
+                                }
                             });
                         } else {
-                            alert(data.message); // Fallback
+                            alert(data.message); 
                             window.loadContent('distribuidores.php');
                         }
 
@@ -157,6 +165,45 @@ export function initDistributorModal() {
         distributorTableBody.parentNode.replaceChild(newBody, distributorTableBody);
 
         newBody.addEventListener('click', function (event) {
+            // Manejo de botón CREAR USUARIO (Botón azul)
+            const createUserBtn = event.target.closest('.create-user-btn');
+            if (createUserBtn) {
+                const codigo = createUserBtn.getAttribute('data-codigo');
+                const razonSocial = createUserBtn.getAttribute('data-razon-social');
+                
+                // Normalizar nombre igual que en PHP
+                const nombreSugerido = razonSocial.toUpperCase()
+                    .replace(/[ÁÀÂÄ]/g, 'A')
+                    .replace(/[ÉÈÊË]/g, 'E')
+                    .replace(/[ÍÌÎÏ]/g, 'I')
+                    .replace(/[ÓÒÔÖ]/g, 'O')
+                    .replace(/[ÚÙÛÜ]/g, 'U')
+                    .replace(/[Ñ]/g, 'N');
+
+                const sugerencias = {
+                    nombre: nombreSugerido,
+                    password: codigo,
+                    distribuidor_codigo: codigo
+                };
+
+                import('./gestionar_usuarios.js').then(module => {
+                    if (!document.getElementById('usuarioModal')) {
+                        fetch('pages/gestionar_usuarios.php').then(r => r.text()).then(html => {
+                            const div = document.createElement('div');
+                            div.innerHTML = html;
+                            const modalHTML = div.querySelector('#usuarioModal');
+                            if(modalHTML) {
+                                document.body.appendChild(modalHTML.cloneNode(true));
+                                module.initUsuarios();
+                                window.abrirModalUsuario(sugerencias);
+                            }
+                        });
+                    } else {
+                        window.abrirModalUsuario(sugerencias);
+                    }
+                });
+            }
+
             // Manejo de botón EDITAR
             const editBtn = event.target.closest('.edit-btn');
             if (editBtn) {

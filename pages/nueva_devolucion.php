@@ -4,12 +4,12 @@ include '../administrador/conexion_auto.php';
 
 // Prepara y ejecuta la consulta para obtener productos ordenados por 'codigo'
 $sql_productos = "
-    (SELECT p.iD as id, p.codigo, p.nombre, s.nombre as sabor
+    (SELECT p.iD as id, p.codigo, p.nombre, s.nombre as sabor, p.tipo
     FROM productos p
     JOIN sabores s ON p.sabor = s.ID
     WHERE p.estado = 1)
     UNION
-    (SELECT iD as id, codigo, nombre, NULL AS sabor
+    (SELECT iD as id, codigo, nombre, NULL AS sabor, tipo
     FROM productos
     WHERE sabor IS NULL AND estado = 1)
     ORDER BY codigo
@@ -53,14 +53,20 @@ $conn->close();
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label for="codigo_distribuidor" class="form-label">Distribuidor:</label>
-                    <select id="codigo_distribuidor" name="codigo_distribuidor" class="form-select">
-                        <option value="" disabled selected>Selecciona un distribuidor</option>
+                    <?php 
+                    $dist_codigo_fijo = $_SESSION['distribuidor_codigo'] ?? null;
+                    ?>
+                    <select id="codigo_distribuidor" name="codigo_distribuidor" class="form-select" <?php echo $dist_codigo_fijo ? 'disabled' : ''; ?>>
+                        <option value="" disabled <?php echo !$dist_codigo_fijo ? 'selected' : ''; ?>>Selecciona un distribuidor</option>
                         <?php foreach ($distribuidores as $distribuidor): ?>
-                            <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>">
+                            <option value="<?php echo htmlspecialchars($distribuidor['codigo']); ?>" <?php echo ($dist_codigo_fijo == $distribuidor['codigo']) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($distribuidor['codigo'] . ' - ' . $distribuidor['razon_social']); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <?php if ($dist_codigo_fijo): ?>
+                        <input type="hidden" name="codigo_distribuidor_hidden" id="codigo_distribuidor_hidden" value="<?php echo htmlspecialchars($dist_codigo_fijo); ?>">
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -85,7 +91,7 @@ $conn->close();
                                     $displayText .= ' (' . strtoupper(substr(htmlspecialchars($producto['sabor']), 0, 1)) . ')';
                                 }
                                 ?>
-                                <option value="<?php echo htmlspecialchars($producto['codigo']); ?>" data-id="<?php echo htmlspecialchars($producto['id']); ?>">
+                                <option value="<?php echo htmlspecialchars($producto['codigo']); ?>" data-id="<?php echo htmlspecialchars($producto['id']); ?>" data-tipo="<?php echo htmlspecialchars($producto['tipo']); ?>">
                                     <?php echo $displayText; ?>
                                 </option>
                             <?php endforeach; ?>
@@ -156,12 +162,12 @@ $conn->close();
         <div class="modal-content border-success">
             <div class="modal-header bg-success text-white">
                 <h5 class="modal-title" id="modalExitoLabel">
-                    <i class="fas fa-check-circle me-2"></i>¡Éxito!
+                    Éxito
                 </h5>
             </div>
             <div class="modal-body text-center">
                 <div class="mb-3">
-                    <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                    <!-- Icono removido para profesionalismo -->
                 </div>
                 <h4 class="text-success mb-3">Devolución Guardada</h4>
                 <p class="mb-0" id="mensajeExito">La devolución ha sido guardada correctamente en el sistema.</p>
