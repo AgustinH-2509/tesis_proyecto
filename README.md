@@ -1,6 +1,6 @@
 # Sistema de Devoluciones - Versión Final
 
-Sistema completo para gestión de devoluciones con funcionalidades de creación, control y procesamiento.
+Sistema completo para gestión de devoluciones con funcionalidades de creación, control y procesamiento. Nombre loco
 
 ## 🚀 Estructura del Proyecto
 
