@@ -1,25 +1,9 @@
+import { TablePaginator } from './paginador.js';
+
 // Inicialización y eventos para la gestión de usuarios
 export function initUsuarios() {
     const btnGuardar = document.getElementById('btnGuardarUsuario');
-    const searchUsuario = document.getElementById('search-usuario');
     const usuariosTableBody = document.querySelector('#usuarios-table tbody');
-
-    // Lógica para el buscador dinámico
-    if (searchUsuario) {
-        searchUsuario.addEventListener('input', function () {
-            const searchText = this.value.toLowerCase();
-            // Buscar dinámicamente en lugar de usar la variable estática que queda obsoleta tras el clonado
-            const rows = document.querySelectorAll('#usuarios-table tbody tr');
-            rows.forEach(row => {
-                const rowText = row.textContent.toLowerCase();
-                if (rowText.includes(searchText)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    }
 
     // Lógica para Crear/Editar
     if (btnGuardar) {
@@ -143,6 +127,11 @@ export function initUsuarios() {
                 }
             }
         });
+    }
+
+    // Inicializar Paginador y Búsqueda después de la clonación del tbody
+    if (document.getElementById('usuarios-table')) {
+        new TablePaginator('usuarios-table', 'search-usuario', 10);
     }
 }
 

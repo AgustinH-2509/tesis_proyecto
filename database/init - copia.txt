@@ -67,19 +67,18 @@ INSERT INTO `devoluciones_estados` (`id`, `estado`) VALUES
 CREATE TABLE `devoluciones_motivos` (
   `id` int(11) NOT NULL,
   `motivos` varchar(100) DEFAULT NULL,
-  `estado` tinyint(1) DEFAULT NULL,
-  `es_devolucion` tinyint(1) DEFAULT 1
+  `estado` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Volcado de datos para la tabla `devoluciones_motivos`
-INSERT INTO `devoluciones_motivos` (`id`, `motivos`, `estado`, `es_devolucion`) VALUES
-(1, 'Textura inusual', NULL, 1),
-(2, 'Color anormal', NULL, 1),
-(3, 'Presencia de cuerpos extraños', NULL, 1),
-(4, 'Otro: ', NULL, 1);
+INSERT INTO `devoluciones_motivos` (`id`, `motivos`, `estado`) VALUES
+(1, 'Textura inusual', NULL),
+(2, 'Color anormal', NULL),
+(3, 'Presencia de cuerpos extraños', NULL),
+(4, 'Otro: ', NULL);
 
--- Estructura de tabla para la tabla `devoluciones_decisiones`
-CREATE TABLE `devoluciones_decisiones` (
+-- Estructura de tabla para la tabla `devoluciones_rechazos`
+CREATE TABLE `devoluciones_rechazos` (
   `cantidad` int(11) DEFAULT NULL,
   `devolucion_detalle` int(11) DEFAULT NULL,
   `ID` int(11) NOT NULL,
@@ -87,8 +86,7 @@ CREATE TABLE `devoluciones_decisiones` (
   `rechazo_motivo` int(11) DEFAULT NULL,
   `rechazo_observacion` varchar(255) DEFAULT NULL,
   `producto` varchar(255) DEFAULT NULL,
-  `aceptacion_motivo` int(11) DEFAULT NULL,
-  `vuelve_stock` tinyint(1) DEFAULT 0
+  `aceptacion_motivo` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Estructura de tabla para la tabla `distribuidores`
@@ -336,8 +334,8 @@ ALTER TABLE `devoluciones_motivos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `motivos` (`motivos`);
 
--- Indices de la tabla `devoluciones_decisiones`
-ALTER TABLE `devoluciones_decisiones`
+-- Indices de la tabla `devoluciones_rechazos`
+ALTER TABLE `devoluciones_rechazos`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `devolucion_detalle` (`devolucion_detalle`),
   ADD KEY `rechazo_motivo` (`rechazo_motivo`);
@@ -401,8 +399,8 @@ ALTER TABLE `devoluciones_motivos`
 ALTER TABLE `motivos_rechazos`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
--- AUTO_INCREMENT de la tabla `devoluciones_decisiones`
-ALTER TABLE `devoluciones_decisiones`
+-- AUTO_INCREMENT de la tabla `devoluciones_rechazos`
+ALTER TABLE `devoluciones_rechazos`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 -- AUTO_INCREMENT de la tabla `productos`
@@ -434,11 +432,11 @@ ALTER TABLE `devoluciones_detalle`
   ADD CONSTRAINT `devoluciones_detalle_ibfk_2` FOREIGN KEY (`producto_cod`) REFERENCES `productos` (`iD`),
   ADD CONSTRAINT `devoluciones_detalle_ibfk_3` FOREIGN KEY (`motivos_devolucion`) REFERENCES `devoluciones_motivos` (`id`);
 
--- Filtros para la tabla `devoluciones_decisiones`
-ALTER TABLE `devoluciones_decisiones`
-  ADD CONSTRAINT `devoluciones_decisiones_ibfk_1` FOREIGN KEY (`devolucion_detalle`) REFERENCES `devoluciones_detalle` (`ID`),
-  ADD CONSTRAINT `devoluciones_decisiones_ibfk_2` FOREIGN KEY (`rechazo_motivo`) REFERENCES `motivos_rechazos` (`ID`),
-  ADD CONSTRAINT `devoluciones_decisiones_ibfk_3` FOREIGN KEY (`aceptacion_motivo`) REFERENCES `devoluciones_motivos` (`id`);
+-- Filtros para la tabla `devoluciones_rechazos`
+ALTER TABLE `devoluciones_rechazos`
+  ADD CONSTRAINT `devoluciones_rechazos_ibfk_1` FOREIGN KEY (`devolucion_detalle`) REFERENCES `devoluciones_detalle` (`ID`),
+  ADD CONSTRAINT `devoluciones_rechazos_ibfk_2` FOREIGN KEY (`rechazo_motivo`) REFERENCES `motivos_rechazos` (`ID`),
+  ADD CONSTRAINT `devoluciones_rechazos_ibfk_3` FOREIGN KEY (`aceptacion_motivo`) REFERENCES `devoluciones_motivos` (`id`);
 
 -- Filtros para la tabla `productos`
 ALTER TABLE `productos`

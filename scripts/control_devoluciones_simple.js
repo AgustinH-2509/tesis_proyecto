@@ -1,4 +1,6 @@
 // Control de Devoluciones - Versión Completa basada en el servidor
+import { TablePaginator } from './paginador.js';
+
 export function initControlDevoluciones() {
     console.log('Control de Devoluciones - Iniciando versión completa...');
     
@@ -24,6 +26,7 @@ export function initControlDevoluciones() {
     const modalProductsTable = document.getElementById('modal-products-table');
 
     let currentDevolucionId = null;
+    let paginator = null;
 
     // Finalizar botón dentro del modal
     const finalizarBtn = document.getElementById('finalizarBtn');
@@ -184,6 +187,12 @@ export function initControlDevoluciones() {
                 fetchDetalleDevolucion(id);
             });
         });
+
+        if (!paginator) {
+            paginator = new TablePaginator('devoluciones-control-table', null, 10);
+        } else {
+            paginator.updateRows();
+        }
     };
 
     // Obtiene y muestra el detalle de la devolución en el modal
@@ -197,6 +206,17 @@ export function initControlDevoluciones() {
                 modalDevId.textContent = `#${id}`;
                 modalCliente.textContent = `${data.devolucion.distribuidor_numero} - ${data.devolucion.nombre_distribuidor}`;
                 modalFecha.textContent = data.devolucion.fecha_ingresa;
+
+                if (finalizarBtn) {
+                    const estado = parseInt(data.devolucion.estado);
+                    const nombreEstado = data.devolucion.nombre_estado;
+                    if (estado === 1 || nombreEstado === 'Enviada') {
+                        finalizarBtn.style.display = 'none';
+                        showNotification('Esta devolución está en estado "Enviada" y no puede finalizarse hasta que sea Recibida.', 'warning');
+                    } else {
+                        finalizarBtn.style.display = 'inline-block';
+                    }
+                }
 
                 // Limpiar tabla de productos
                 modalProductsTable.innerHTML = '';
@@ -280,7 +300,8 @@ export function initControlDevoluciones() {
                             const rechazos = product.rechazos_raw.split('||');
                             rechazos.forEach((rechazo, index) => {
                                 if (rechazo.trim()) {
-                                    const [cantidad, motivo, observacion] = rechazo.split('::');
+                                    const [cantidad, motivo, observacion, vuelveStock] = rechazo.split('::');
+                                    const cVuelveStock = (vuelveStock && vuelveStock === '1') ? 'Sí' : 'No';
                                     const rechazoRow = document.createElement('tr');
                                     rechazoRow.classList.add('table-light');
                                     rechazoRow.innerHTML = `
@@ -300,7 +321,8 @@ export function initControlDevoluciones() {
                                             ${observacion && observacion !== 'N/A' ? `<small class="text-muted">Obs: ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
                                         </td>
                                         <td class="py-2" style="background-color: #fff5f5;">
-                                            <span class="badge bg-danger">Rechazado</span>
+                                            <span class="badge bg-danger">Rechazado</span><br>
+                                            <span class="badge bg-info mt-1">Vuelve a Stock: ${cVuelveStock}</span>
                                         </td>
                                         <td class="py-2" style="background-color: #fff5f5;">
                                             <small class="text-muted">Decisión registrada</small>
@@ -324,7 +346,8 @@ export function initControlDevoluciones() {
                             const aceptados = product.aceptados_raw.split('||');
                             aceptados.forEach((aceptado, index) => {
                                 if (aceptado.trim()) {
-                                    const [cantidad, motivo, observacion] = aceptado.split('::');
+                                    const [cantidad, motivo, observacion, vuelveStock] = aceptado.split('::');
+                                    const cVuelveStock = (vuelveStock && vuelveStock === '1') ? 'Sí' : 'No';
                                     const aceptadoRow = document.createElement('tr');
                                     aceptadoRow.classList.add('table-light');
                                     aceptadoRow.innerHTML = `
@@ -344,7 +367,8 @@ export function initControlDevoluciones() {
                                             ${observacion && observacion !== 'N/A' ? `<small class="text-muted">Obs: ${observacion}</small>` : '<small class="text-muted">Sin observaciones</small>'}
                                         </td>
                                         <td class="py-2" style="background-color: #f0fff4;">
-                                            <span class="badge bg-success">Aceptado</span>
+                                            <span class="badge bg-success">Aceptado</span><br>
+                                            <span class="badge bg-info mt-1">Vuelve a Stock: ${cVuelveStock}</span>
                                         </td>
                                         <td class="py-2" style="background-color: #f0fff4;">
                                             <small class="text-muted">Decisión registrada</small>
@@ -427,6 +451,12 @@ export function initControlDevoluciones() {
                         </div>
                         <div class="col-auto">
                             <input type="text" id="observacion-${uniqueId}" class="form-control form-control-sm" placeholder="Observación opcional" style="width: 200px;">
+                        </div>
+                        <div class="col-auto ms-3">
+                            <div class="form-check pt-2">
+                                <input class="form-check-input" type="checkbox" id="vuelve_stock-${uniqueId}">
+                                <label class="form-check-label fw-bold text-danger" for="vuelve_stock-${uniqueId}">¿Vuelve a Stock?</label>
+                            </div>
                         </div>
                         <div class="col-auto">
                             <button class="btn btn-sm btn-success save-reject-btn" data-detalle-id="${detalleId}" data-unique-id="${uniqueId}" data-cantidad-original="${cantidadDisponible}">
@@ -542,6 +572,12 @@ export function initControlDevoluciones() {
                         <div class="col-auto">
                             <input type="text" id="observacion-${uniqueId}" class="form-control form-control-sm border-success" placeholder="Observación opcional" style="width: 200px;">
                         </div>
+                        <div class="col-auto ms-3">
+                            <div class="form-check pt-2">
+                                <input class="form-check-input border-success" type="checkbox" id="vuelve_stock-${uniqueId}">
+                                <label class="form-check-label fw-bold text-success" for="vuelve_stock-${uniqueId}">¿Vuelve a Stock?</label>
+                            </div>
+                        </div>
                         <div class="col-auto">
                             <button class="btn btn-sm btn-success save-accept-btn" data-detalle-id="${detalleId}" data-unique-id="${uniqueId}" data-cantidad-original="${cantidadDisponible}">
                                 <i class="bi bi-check-circle"></i> Guardar
@@ -618,6 +654,8 @@ export function initControlDevoluciones() {
             const cantidad = parseInt(cantidadInput.value, 10);
             const motivoId = motivoSelect.value;
             const observacion = observacionInput.value.trim();
+            const vuelveStockCheckbox = document.getElementById(`vuelve_stock-${uniqueId}`);
+            const vuelveStock = (vuelveStockCheckbox && vuelveStockCheckbox.checked) ? 1 : 0;
             
             if (!cantidad || cantidad <= 0) {
                 showNotification(`Debe especificar una cantidad válida para ${accionTxtL}`, 'error');
@@ -651,7 +689,7 @@ export function initControlDevoluciones() {
             event.target.innerHTML = '<i class="bi bi-hourglass-split"></i> Guardando...';
             
             try {
-                const success = await updateProductStatus(detalleId, estado, motivoId, observacion, cantidad, uniqueId);
+                const success = await updateProductStatus(detalleId, estado, motivoId, observacion, cantidad, uniqueId, vuelveStock);
                 
                 if (success) {
                     if (esOtro) {
@@ -724,6 +762,12 @@ export function initControlDevoluciones() {
                                                     </div>
                                                     <div class="col-auto">
                                                         <input type="text" id="observacion-${uniqueId}" class="form-control form-control-sm" placeholder="Observación opcional" style="width: 200px;">
+                                                    </div>
+                                                    <div class="col-auto ms-3">
+                                                        <div class="form-check pt-2">
+                                                            <input class="form-check-input ${isAcceptance ? 'border-success' : ''}" type="checkbox" id="vuelve_stock-${uniqueId}">
+                                                            <label class="form-check-label fw-bold ${textClass}" for="vuelve_stock-${uniqueId}">¿Vuelve a Stock?</label>
+                                                        </div>
                                                     </div>
                                                     <div class="col-auto">
                                                         <button class="btn btn-sm ${btnMainClass}" data-detalle-id="${detalleId}" data-unique-id="${uniqueId}" data-cantidad-original="${cantidadDisponible}">
@@ -866,8 +910,8 @@ export function initControlDevoluciones() {
     });
 
     // Función para actualizar el estado de un producto individual
-    const updateProductStatus = async (detalleId, estado, motivoId = null, observacion = '', cantidadRechazada = null, uniqueId = null) => {
-        console.log('Enviando datos:', { detalleId, estado, motivoId, observacion, cantidadRechazada });
+    const updateProductStatus = async (detalleId, estado, motivoId = null, observacion = '', cantidadRechazada = null, uniqueId = null, vuelveStock = 0) => {
+        console.log('Enviando datos:', { detalleId, estado, motivoId, observacion, cantidadRechazada, vuelveStock });
         
         const formData = new FormData();
         formData.append('detalle_id', detalleId);
@@ -875,6 +919,7 @@ export function initControlDevoluciones() {
         if (motivoId) formData.append('motivo_id', motivoId);
         if (observacion) formData.append('observacion', observacion);
         if (cantidadRechazada) formData.append('cantidad_rechazada', cantidadRechazada);
+        formData.append('vuelve_stock', vuelveStock);
 
         try {
             const response = await fetch('ajax/control_devolucion/update_product_status.php', {

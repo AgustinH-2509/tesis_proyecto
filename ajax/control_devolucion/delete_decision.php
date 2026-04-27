@@ -33,7 +33,7 @@ try {
         // Eliminar rechazo específico
         $motivo = $_POST['motivo'] ?? '';
         
-        $sql = "DELETE FROM devoluciones_rechazos 
+        $sql = "DELETE FROM devoluciones_decisiones 
                 WHERE devolucion_detalle = ? 
                 AND cantidad = ? 
                 AND rechazo = 1 
@@ -64,7 +64,7 @@ try {
         
     } else if ($action === 'delete_acceptance') {
         // Eliminar aceptación específica
-        $sql = "DELETE FROM devoluciones_rechazos 
+        $sql = "DELETE FROM devoluciones_decisiones 
                 WHERE devolucion_detalle = ? 
                 AND cantidad = ? 
                 AND rechazo = 0 

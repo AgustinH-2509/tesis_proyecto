@@ -1,4 +1,5 @@
 // scripts/historial.js
+import { TablePaginator } from './paginador.js';
 
 export function initHistorial() {
     const filterForm = document.getElementById('filter-form');
@@ -8,6 +9,7 @@ export function initHistorial() {
     const modalBodyContent = document.getElementById('modal-body-content');
     const exportarExcelBtn = document.getElementById('exportarExcelBtn');
 
+    let paginator = null;
     let currentDevolucionId = null;
 
     const fetchDevoluciones = async (distribuidorCodigo) => {
@@ -82,6 +84,12 @@ export function initHistorial() {
                 }
             });
         });
+
+        if (!paginator) {
+            paginator = new TablePaginator('devoluciones-table', null, 10);
+        } else {
+            paginator.updateRows();
+        }
     };
 
     if (filterForm) {

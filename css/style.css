@@ -141,7 +141,7 @@
 }
 
 /* Media query para pantallas pequeñas (lo mismo que el colapso) */
-@media(max-width:400px){
+@media(max-width:768px){
     .sidebar {
         width: 60px;
     }
@@ -158,6 +158,11 @@
 
     .sidebar .sidebar-title{
         display: none;
+    }
+
+    .main-content {
+        margin-left: 60px !important;
+        padding: 10px !important;
     }
 }   
 

@@ -54,7 +54,7 @@ $conn->close();
 
             <h5 class="card-title">Resultados de la Búsqueda</h5>
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover" id="devoluciones-table">
                     <thead>
                         <tr>
                             <th>ID Devolución</th>

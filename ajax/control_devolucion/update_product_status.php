@@ -25,6 +25,7 @@ if ($rawInput) {
         if (isset($jsonIn['estado'])) $_POST['estado'] = $jsonIn['estado'];
         if (isset($jsonIn['motivo_id'])) $_POST['motivo_id'] = $jsonIn['motivo_id'];
         if (isset($jsonIn['observacion'])) $_POST['observacion'] = $jsonIn['observacion'];
+        if (isset($jsonIn['vuelve_stock'])) $_POST['vuelve_stock'] = $jsonIn['vuelve_stock'];
 
         // Soporte para procesamiento por lotes: recibir 'datos_tabla' directamente
         if (isset($jsonIn['datos_tabla']) && is_array($jsonIn['datos_tabla']) && count($jsonIn['datos_tabla']) > 0) {
@@ -63,7 +64,8 @@ if ($items === null) {
         'estado' => $_POST['estado'],
         'motivo_id' => $_POST['motivo_id'] ?? null,
         'observacion' => $_POST['observacion'] ?? null,
-        'cantidad_rechazada' => $_POST['cantidad_rechazada'] ?? null
+        'cantidad_rechazada' => $_POST['cantidad_rechazada'] ?? null,
+        'vuelve_stock' => $_POST['vuelve_stock'] ?? 0
     ]];
 }
 
@@ -86,6 +88,7 @@ try {
         $estado = isset($item['estado']) ? (int)$item['estado'] : null; // 1 = Rechazado, 0 = Aceptado
         $motivo_id = $item['motivo_id'] ?? ($item['motivos_devolucion'] ?? null);
         $observacion = $item['observacion'] ?? ($item['observaciones'] ?? null);
+        $vuelve_stock = isset($item['vuelve_stock']) ? (int)$item['vuelve_stock'] : 0;
 
         // Validaciones mejoradas
         if ($detalle_id === null || !is_numeric($detalle_id)) {
@@ -120,7 +123,7 @@ try {
             }
 
             // Validación: obtener suma actual de procesados (rechazos + aceptados) para este detalle
-            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_rechazos WHERE devolucion_detalle = ?";
+            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_decisiones WHERE devolucion_detalle = ?";
             $stmt_sum = $conn->prepare($sql_sum_proc);
             $stmt_sum->bind_param("i", $detalle_id);
             $stmt_sum->execute();
@@ -136,18 +139,19 @@ try {
             }
 
             // Insertar el rechazo
-            $sql_insert = "INSERT INTO devoluciones_rechazos (devolucion_detalle, producto, cantidad, rechazo_motivo, rechazo_observacion, rechazo) VALUES (?, ?, ?, ?, ?, 1)";
+            $sql_insert = "INSERT INTO devoluciones_decisiones (devolucion_detalle, producto, cantidad, rechazo_motivo, rechazo_observacion, rechazo, vuelve_stock) VALUES (?, ?, ?, ?, ?, 1, ?)";
             $stmt_insert = $conn->prepare($sql_insert);
             if (!$stmt_insert) {
                 throw new Exception("Error al preparar inserción de rechazo: " . $conn->error);
             }
             $stmt_insert->bind_param(
-                "isiss",
+                "isissi",
                 $detalle_id,
                 $detalle_original['producto_cod'],
                 $cantidad_rechazada,
                 $motivo_id,
-                $observacion
+                $observacion,
+                $vuelve_stock
             );
 
             if (!$stmt_insert->execute()) {
@@ -168,7 +172,7 @@ try {
                 throw new Exception("Cantidad aceptada debe ser mayor a 0.");
             }
 
-            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_rechazos WHERE devolucion_detalle = ?";
+            $sql_sum_proc = "SELECT COALESCE(SUM(cantidad), 0) AS total_procesado FROM devoluciones_decisiones WHERE devolucion_detalle = ?";
             $stmt_sum = $conn->prepare($sql_sum_proc);
             $stmt_sum->bind_param("i", $detalle_id);
             $stmt_sum->execute();
@@ -182,15 +186,16 @@ try {
                 throw new Exception("Cantidad aceptada ({$cantidad_aceptada}) excesiva frente al disponible ({$cantidad_disponible}).");
             }
 
-            $sql_insert_aceptado = "INSERT INTO devoluciones_rechazos (devolucion_detalle, producto, cantidad, aceptacion_motivo, rechazo_observacion, rechazo) VALUES (?, ?, ?, ?, ?, 0)";
+            $sql_insert_aceptado = "INSERT INTO devoluciones_decisiones (devolucion_detalle, producto, cantidad, aceptacion_motivo, rechazo_observacion, rechazo, vuelve_stock) VALUES (?, ?, ?, ?, ?, 0, ?)";
             $stmt_insert_aceptado = $conn->prepare($sql_insert_aceptado);
             $stmt_insert_aceptado->bind_param(
-                "isiss",
+                "isissi",
                 $detalle_id,
                 $detalle_original['producto_cod'],
                 $cantidad_aceptada,
                 $motivo_id,
-                $observacion
+                $observacion,
+                $vuelve_stock
             );
 
             if (!$stmt_insert_aceptado->execute()) {

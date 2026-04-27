@@ -109,9 +109,12 @@ try {
             d.distribuidor_numero,
             d.distribuidor_codigo,
             dist.razon_social AS nombre_distribuidor,
-            d.fecha_ingresa
+            d.fecha_ingresa,
+            d.estado,
+            de.estado AS nombre_estado
         FROM devoluciones d
         JOIN distribuidores dist ON d.distribuidor_codigo = dist.codigo
+        LEFT JOIN devoluciones_estados de ON d.estado = de.id
         WHERE d.ID = ?
     ";
     $stmt_devolucion = $conn->prepare($sql_devolucion);
@@ -143,13 +146,13 @@ try {
             dd.vencimiento,
             dd.rechazo,
             md.motivos AS motivo_devolucion,
-            COALESCE((SELECT SUM(dr.cantidad) FROM devoluciones_rechazos dr WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 1), 0) AS total_rechazado,
-            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', COALESCE(mr.motivo, dr.rechazo_motivo), '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' ')) SEPARATOR '||') 
-             FROM devoluciones_rechazos dr LEFT JOIN motivos_rechazos mr ON dr.rechazo_motivo = mr.ID 
+            COALESCE((SELECT SUM(dr.cantidad) FROM devoluciones_decisiones dr WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 1), 0) AS total_rechazado,
+            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', COALESCE(mr.motivo, dr.rechazo_motivo), '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' '), '::', IFNULL(dr.vuelve_stock, 0)) SEPARATOR '||') 
+             FROM devoluciones_decisiones dr LEFT JOIN motivos_rechazos mr ON dr.rechazo_motivo = mr.ID 
              WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 1) AS rechazos_raw,
-            COALESCE((SELECT SUM(dr.cantidad) FROM devoluciones_rechazos dr WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 0), 0) AS total_aceptado,
-            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', COALESCE(dm.motivos, 'Aceptado sin motivo especifico'), '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' ')) SEPARATOR '||') 
-             FROM devoluciones_rechazos dr LEFT JOIN devoluciones_motivos dm ON dr.aceptacion_motivo = dm.id 
+            COALESCE((SELECT SUM(dr.cantidad) FROM devoluciones_decisiones dr WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 0), 0) AS total_aceptado,
+            (SELECT GROUP_CONCAT(CONCAT(dr.cantidad, '::', COALESCE(dm.motivos, 'Aceptado sin motivo especifico'), '::', REPLACE(IFNULL(dr.rechazo_observacion, ''), '\n', ' '), '::', IFNULL(dr.vuelve_stock, 0)) SEPARATOR '||') 
+             FROM devoluciones_decisiones dr LEFT JOIN devoluciones_motivos dm ON dr.aceptacion_motivo = dm.id 
              WHERE dr.devolucion_detalle = dd.ID AND dr.rechazo = 0) AS aceptados_raw
         FROM devoluciones_detalle dd
         JOIN productos p ON dd.producto_cod = p.iD

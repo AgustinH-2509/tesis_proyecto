@@ -33,7 +33,7 @@ if ($result_distribuidores->num_rows > 0) {
     }
 }
 // NUEVO: Consulta para obtener los motivos de devolución
-$sql_motivos = "SELECT id, motivos FROM devoluciones_motivos";
+$sql_motivos = "SELECT id, motivos FROM devoluciones_motivos WHERE (estado IS NULL OR estado = 1) AND es_devolucion = 1";
 $result_motivos = $conn->query($sql_motivos);
 $motivos = [];
 if ($result_motivos->num_rows > 0) {
