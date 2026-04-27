@@ -1,7 +1,6 @@
 {
     "1": [
         "inicio.php",
-        "control_devoluciones.php",
         "historial.php",
         "informes.php",
         "distribuidores.php"

@@ -1,3 +1,5 @@
+import { TablePaginator } from './paginador.js';
+
 export function initInformes() {
     const reportForm = document.getElementById('report-form');
     const resultsContainer = document.getElementById('report-results-container');
@@ -6,10 +8,12 @@ export function initInformes() {
     const detailModal = new bootstrap.Modal(document.getElementById('reportDetailModal'));
     const modalContent = document.getElementById('report-modal-content');
 
+    let paginator = null;
+
     if (reportForm) {
-        reportForm.addEventListener('submit', async function(e) {
+        reportForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
+
             const btnSubmit = reportForm.querySelector('button[type="submit"]');
             const originalText = btnSubmit.innerHTML;
             btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
@@ -41,7 +45,7 @@ export function initInformes() {
     }
 
     if (exportBtn) {
-        exportBtn.addEventListener('click', function() {
+        exportBtn.addEventListener('click', function () {
             alert('Funcionalidad de exportación Excel preparada. Pendiente definición de formato final del informe.');
             // Aquí se podría redirigir a un generador de Excel PHP con los mismos parámetros
         });
@@ -73,17 +77,23 @@ export function initInformes() {
 
         // Eventos para ver detalles
         document.querySelectorAll('.view-detail-btn').forEach(btn => {
-            btn.addEventListener('click', async function() {
+            btn.addEventListener('click', async function () {
                 const id = this.getAttribute('data-id');
                 await loadDevolucionDetalle(id);
             });
         });
+
+        if (!paginator) {
+            paginator = new TablePaginator('report-results-table', null, 20);
+        } else {
+            paginator.updateRows();
+        }
     }
 
     async function loadDevolucionDetalle(id) {
         modalContent.innerHTML = '<div class="text-center p-3"><div class="spinner-border"></div></div>';
         detailModal.show();
-        
+
         try {
             const response = await fetch(`pages/ver_devolucion.php?id=${id}`);
             const html = await response.text();

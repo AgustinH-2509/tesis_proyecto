@@ -57,7 +57,7 @@ include 'administrador/conexion_auto.php';
                 'motivos_rechazos' => 'Motivos de rechazo',
                 'devoluciones' => 'Encabezados de devoluciones',
                 'devoluciones_detalle' => 'Detalle de productos devueltos',
-                'devoluciones_rechazos' => 'Control de rechazos y aceptaciones'
+                'devoluciones_decisiones' => 'Control de rechazos y aceptaciones'
             ];
             
             $todas_ok = true;

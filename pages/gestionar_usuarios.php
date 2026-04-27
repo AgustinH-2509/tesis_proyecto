@@ -59,7 +59,7 @@ $result = $conn->query($sql);
                                 </td>
                                 <td>
                                     <?php if ($row['distribuidor_codigo']): ?>
-                                        <?= htmlspecialchars($row['distribuidor_nombre']) ?> (<?= $row['distribuidor_codigo'] ?>)
+                                        <?= htmlspecialchars($row['distribuidor_nombre'] ?? '') ?> (<?= $row['distribuidor_codigo'] ?>)
                                     <?php else: ?>
                                         <span class="text-muted">N/A</span>
                                     <?php endif; ?>

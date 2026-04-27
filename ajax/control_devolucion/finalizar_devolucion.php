@@ -57,7 +57,7 @@ try {
             dd.observaciones,
             COALESCE(SUM(CASE WHEN dr.rechazo = 1 THEN dr.cantidad ELSE 0 END), 0) as cantidad_rechazada
         FROM devoluciones_detalle dd
-        LEFT JOIN devoluciones_rechazos dr ON dd.ID = dr.devolucion_detalle
+        LEFT JOIN devoluciones_decisiones dr ON dd.ID = dr.devolucion_detalle
         WHERE dd.devolucion = ?
         GROUP BY dd.ID, dd.cantidad, dd.producto_cod, dd.observaciones
     ";
@@ -76,7 +76,7 @@ try {
         // Si hay cantidad restante, registrarla como aceptada
         if ($cantidad_restante > 0) {
             // Verificar si ya existe un registro de aceptación para este detalle
-            $sql_check_aceptado = "SELECT COUNT(*) as count FROM devoluciones_rechazos WHERE devolucion_detalle = ? AND rechazo = 0";
+            $sql_check_aceptado = "SELECT COUNT(*) as count FROM devoluciones_decisiones WHERE devolucion_detalle = ? AND rechazo = 0";
             $stmt_check = $conn->prepare($sql_check_aceptado);
             $stmt_check->bind_param("i", $detalle_id);
             $stmt_check->execute();
@@ -85,7 +85,7 @@ try {
             
             // Solo insertar si no existe ya un registro de aceptación
             if ((int)$check_result['count'] === 0) {
-                $sql_insert_aceptado = "INSERT INTO devoluciones_rechazos (devolucion_detalle, producto, cantidad, rechazo_motivo, rechazo_observacion, rechazo) VALUES (?, ?, ?, ?, ?, 0)";
+                $sql_insert_aceptado = "INSERT INTO devoluciones_decisiones (devolucion_detalle, producto, cantidad, rechazo_motivo, rechazo_observacion, rechazo) VALUES (?, ?, ?, ?, ?, 0)";
                 $stmt_insert_aceptado = $conn->prepare($sql_insert_aceptado);
                 
                 $motivo_aceptacion = null;
@@ -117,7 +117,7 @@ try {
             COALESCE(SUM(CASE WHEN dr.rechazo = 1 THEN dr.cantidad ELSE 0 END), 0) as cantidad_rechazada,
             COALESCE(SUM(CASE WHEN dr.rechazo = 0 THEN dr.cantidad ELSE 0 END), 0) as cantidad_aceptada
         FROM devoluciones_detalle dd
-        LEFT JOIN devoluciones_rechazos dr ON dd.ID = dr.devolucion_detalle
+        LEFT JOIN devoluciones_decisiones dr ON dd.ID = dr.devolucion_detalle
         WHERE dd.devolucion = ?
         GROUP BY dd.ID, dd.cantidad
     ";

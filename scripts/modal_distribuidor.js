@@ -1,27 +1,11 @@
+import { TablePaginator } from './paginador.js';
+
 // Este script maneja la lógica para el modal y el filtro de la tabla de distribuidores.
 export function initDistributorModal() {
     const saveDistributorBtn = document.getElementById('saveDistributorBtn');
     const addDistributorForm = document.getElementById('add-distributor-form');
-    const searchInput = document.getElementById('search-input');
     const distributorTableBody = document.querySelector('#distributor-table tbody');
-    const addDistributorButton = document.querySelector('[data-bs-target="#addDistributorModal"]'); // Selecciona el botón para abrir el modal
-
-    // Lógica para el buscador dinámico
-    if (searchInput) {
-        searchInput.addEventListener('input', function () {
-            const searchText = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#distributor-table tbody tr');
-
-            rows.forEach(row => {
-                const rowText = row.textContent.toLowerCase();
-                if (rowText.includes(searchText)) {
-                    row.style.display = ''; // Muestra la fila
-                } else {
-                    row.style.display = 'none'; // Oculta la fila
-                }
-            });
-        });
-    }
+    const addDistributorButton = document.querySelector('[data-bs-target="#addDistributorModal"]');
 
     // Inicializar modal con opciones para evitar problemas de foco
     let distributorModalInstance = null;
@@ -325,5 +309,10 @@ export function initDistributorModal() {
                     alert("Error técnico al actualizar.");
                 });
         });
+    }
+
+    // Inicializar Paginador y Búsqueda después de la clonación del tbody
+    if (document.getElementById('distributor-table')) {
+        new TablePaginator('distributor-table', 'search-input', 10);
     }
 }
